@@ -40,7 +40,7 @@ Feel free to clone it and explore it.
 
 ## Getting familiar with framework
 
-If you got this far you should be able to start automating. Please go to `src/main/java/org/amplitudo/automation/templates` and check all Template files in order to get familiar with formatting and usage
+If you got this far you should be able to start automating. Please go to `/templates` and check all Template files in order to get familiar with formatting and usage
 
 ## TestNG - Test Next Generation
 
