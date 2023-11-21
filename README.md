@@ -4,9 +4,9 @@
 
 This framework is developed by Nikolina Djekic. 
 
-You can contact me on [linkedin](https://www.linkedin.com/in/nikolina-djekic/) 
+You can contact me on [LinkedIn](https://www.linkedin.com/in/nikolina-djekic/) or by sending mail to *nikolina.djekic94@gmail.com* or *inanikolina@gmail.com*
 
-Please feel free to reach out to me if you have any suggestion or you want to contribute
+Please feel free to reach out to me if you have any suggestion, or you want to contribute to this project
 
 This project is still in progress, more functionalities will be added to it. 
 
