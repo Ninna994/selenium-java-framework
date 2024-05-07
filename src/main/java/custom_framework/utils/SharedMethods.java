@@ -1,6 +1,5 @@
-package customFramework.utils;
+package custom_framework.utils;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -11,7 +10,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -28,6 +26,8 @@ import java.util.*;
 
 
 public class SharedMethods extends FrameworkSetup {
+
+    Random randomNum = new Random();
 
     public void check(By by) {
         sleepTime(1000);
@@ -225,6 +225,7 @@ public class SharedMethods extends FrameworkSetup {
         Set<String> windows = driver().getWindowHandles();
         Iterator<String> it = windows.iterator();
         String originalTab = it.next();
+        log.info("Original tab {}", originalTab);
         String newTab = it.next();
         driver().switchTo().window(newTab);
         sleepTime(2000);
@@ -268,6 +269,34 @@ public class SharedMethods extends FrameworkSetup {
         Actions action = new Actions(driver());
         action.moveToElement(driver().findElement(byHover)).build().perform();
         action.moveToElement(driver().findElement(By.xpath("//*[contains(text(), '" + textToClickOn + "')]"))).click().build().perform();
+    }
+
+    /**
+     * Specific for elements whose dropdown opens while hovering. On hover, it randomly chooses one of the elements from dropdown.
+     *
+     * @param byHover - element that is being hovered
+     */
+    public void hoverAndClickRandom(By byHover) {
+        waitForElementClickable(byHover);
+        sleepTime(300);
+        Actions action = new Actions(driver());
+        action.moveToElement(driver().findElement(byHover)).build().perform();
+        waitForElementVisible(By.cssSelector(".infinite-dropdown.show"));
+        List<WebElement> optionItems = driver().findElements(By.xpath("//div[contains(@class,'show')]//div[contains(@class,'dropdown')]"));
+
+        int valMax = optionItems.size() - 1;
+        int value;
+        System.out.println("Number of options is: " + valMax);
+        if (optionItems.isEmpty()) {
+            log.error("List is empty");
+        }
+
+        if (valMax < 1) {
+            value = 0;
+        } else {
+            value = 1 + randomNum.nextInt(valMax);
+        }
+        optionItems.get(value).click();
     }
 
     public void hoverOver(By by) {
@@ -378,7 +407,7 @@ public class SharedMethods extends FrameworkSetup {
 
         List<WebElement> allOptions = select.getOptions();
         for (WebElement allOption : allOptions) {
-            log.info("Option found: " + allOption.getText() + ", compared to: " + optionValue);
+            log.info("Option found: {}, compared to: {}", allOption.getText(), optionValue);
             if (allOption.getText().contains(optionValue)) {
                 isFound = true;
                 break;
@@ -642,7 +671,7 @@ public class SharedMethods extends FrameworkSetup {
         WebElement container = driver().findElement(By.xpath("//div[contains(@class, 'table-container')]"));
         Boolean isScrollable = (Boolean) jse.executeScript(jsElementIsScrollable, container);
 
-        if (isScrollable) {
+        if (Boolean.TRUE.equals(isScrollable)) {
             log.info("Table is scrollable.");
             jse.executeScript(
                     "var timer = setInterval(myFunction, 1000);" +
@@ -710,6 +739,7 @@ public class SharedMethods extends FrameworkSetup {
         try {
             Thread.sleep(param);
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt(); // Re-interrupt the thread
             Assert.fail("InterruptedException: " + ex.getMessage());
         }
     }
@@ -742,6 +772,69 @@ public class SharedMethods extends FrameworkSetup {
      * -------------------- FILES METHODS -------------------- //
      */
 
+    public void deleteAllFilesFromDirectory() {
+        String directory = fileDirectory;
+
+        File file = new File(directory);
+        String[] currentFiles;
+        if (file.isDirectory()) {
+            currentFiles = file.list();
+            for (int i = 0; i < currentFiles.length; i++) {
+                File myFile = new File(file, currentFiles[i]);
+                if (!myFile.getName().contains("automation")) {
+                    myFile.delete();
+                }
+
+            }
+        }
+    }
+
+    public void downloadDocument(String fileName1) {
+        sleepTime(4000);
+        File folder = new File(fileDirectory);
+        log.info(fileDirectory);
+        File[] listOfFiles = folder.listFiles();
+        boolean found = false;
+        File f = null;
+
+        for (File listOfFile : listOfFiles) {
+            if (listOfFile.isFile()) {
+                String fileName = listOfFile.getName();
+                log.info("File {}", listOfFile.getName());
+                if (fileName.matches(fileName1)) {
+                    f = new File(fileName);
+                    found = true;
+                    Assert.assertTrue(found, "Document not found");
+                }
+            }
+        }
+        Assert.assertTrue(found, "Downloaded document is not found");
+    }
+
+    public String findLastDownloadedFile() {
+        File dir = new File(fileDirectory);
+        File[] files = dir.listFiles();
+
+        if (files == null || files.length == 0) return null;
+
+        File lastModifiedFile = files[0];
+
+        for (int i = 1; i < files.length; i++) {
+            if (lastModifiedFile.lastModified() < files[i].lastModified()) lastModifiedFile = files[i];
+        }
+        return lastModifiedFile.getName();
+    }
+
+    public String readExcel(int columnNumber) throws IOException {
+        FileInputStream fs = new FileInputStream(fileDirectory + "\\" + "proba.xlsx");
+        XSSFWorkbook workbook = new XSSFWorkbook(fs);
+        XSSFSheet sheet = workbook.getSheetAt(0); //sheet number
+        Row row = sheet.getRow(1);
+        Cell cell = row.getCell(columnNumber);
+        log.info("Broj kolone: {}", columnNumber);
+        return String.valueOf(cell);
+    }
+
     public void uploadFile(String name) {
         driver().findElement(By.xpath(" //input[@type='file']")).sendKeys(fileDirectory + "\\" + name);
     }
@@ -750,6 +843,27 @@ public class SharedMethods extends FrameworkSetup {
         driver().findElement(By.xpath(" //input[@type='file']")).sendKeys(fileDirectory + "\\" + fileName1 + "\n " + fileDirectory + "\\" + fileName2);
     }
 
+    /**
+     * This method validates the value between the data in excel and the table.
+     * With the assertion, we validate that the difference in the tables is not more than 1.
+     *
+     * @throws IOException
+     */
+
+    public void validateExcel() throws IOException {
+        //COUNT EXCEL TABLE ROWS
+        FileInputStream fis = new FileInputStream(fileDirectory + findLastDownloadedFile());
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+        XSSFSheet sheet = workbook.getSheet("Sheet0");
+        int excelRowNum = sheet.getLastRowNum();
+        log.info("Total number of rows in the excel is {}", excelRowNum);
+        //COUNT WEB TABLE ROWS
+        scrollToEndOfTable();
+        List<WebElement> rowsTable = driver().findElements(By.cssSelector("tr.ant-table-row"));
+        int tableRowCount = rowsTable.size();
+        log.info("Number of rows in table: {}", tableRowCount);
+        Assert.assertTrue(Math.abs(excelRowNum - tableRowCount) <= 1, "Number of rows in excel and table do not match");
+    }
 
     /*
      * -------------------- CALENDAR / DATE / TIME METHODS -------------------- //

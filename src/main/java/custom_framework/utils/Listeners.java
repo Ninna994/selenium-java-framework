@@ -1,4 +1,4 @@
-package customFramework.utils;
+package custom_framework.utils;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;

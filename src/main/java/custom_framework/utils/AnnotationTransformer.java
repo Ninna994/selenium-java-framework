@@ -1,4 +1,4 @@
-package customFramework.utils;
+package custom_framework.utils;
 
 import org.testng.IAnnotationTransformer;
 import org.testng.annotations.ITestAnnotation;

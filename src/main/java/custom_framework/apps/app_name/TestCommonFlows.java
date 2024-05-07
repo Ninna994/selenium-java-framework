@@ -1,6 +1,6 @@
-package customFramework.apps.app_name;
+package custom_framework.apps.app_name;
 
-public class AppNameCommonFlows {
+public class TestCommonFlows extends TestNav {
     /*
       ********** COMMON FLOWS **********
       This class is where we store commonly used workflows to reference in other tests

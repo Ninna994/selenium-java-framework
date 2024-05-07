@@ -1,4 +1,4 @@
-package customFramework.templates;
+package custom_framework.templates;
 
 public class TemplateTest {
     /*

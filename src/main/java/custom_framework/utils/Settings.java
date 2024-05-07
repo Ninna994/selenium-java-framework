@@ -1,4 +1,4 @@
-package customFramework.utils;
+package custom_framework.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

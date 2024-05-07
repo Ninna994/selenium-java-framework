@@ -1,4 +1,4 @@
-package customFramework.utils;
+package custom_framework.utils;
 
 import org.openqa.selenium.By;
 
@@ -66,6 +66,10 @@ public class ExtendedBy {
 
     public By partialId(String param) {
         return By.xpath(("//*[contains(@id, '" + param + "')]"));
+    }
+
+    public By partialClass(String param) {
+        return By.xpath(("//*[contains(@class, '" + param + "')]"));
     }
 
 }

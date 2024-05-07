@@ -1,6 +1,8 @@
-package customFramework.apps.app_name;
+package custom_framework.apps.app_name;
 
-public class AppNameNav {
+import custom_framework.utils.SharedMethods;
+
+public class TestNav extends SharedMethods {
     /*
      * This class is where all the menu navigation commands are stored.
      * - Name the method as the page is named in the application, prefixed with 'nav'.
