@@ -25,6 +25,7 @@ dist/
 reports/*.html
 reports/logs/
 test-output/
+allure-results/
 
 
 # Applications

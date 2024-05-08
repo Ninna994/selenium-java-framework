@@ -7,8 +7,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -29,6 +27,11 @@ public class SharedMethods extends FrameworkSetup {
 
     Random randomNum = new Random();
 
+    /**
+     * Checks a checkbox or selects a radio button if it is not already selected
+     *
+     * @param by the locator used to identify the checkbox or radio button element
+     */
     public void check(By by) {
         sleepTime(1000);
         waitForElementClickable(by);
@@ -38,7 +41,7 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     /**
-     * Check element after some time has passed before clicking occurs
+     * Checks a checkbox or selects a radio after some time has passed before clicking occurs
      *
      * @param by     - what to Click
      * @param msTime - how long to wait after click
@@ -51,6 +54,11 @@ public class SharedMethods extends FrameworkSetup {
         }
     }
 
+    /**
+     * Helper method to handle mailinator for disposable emails. It visits mailinator website, searches for mailbox and clicks on button in email
+     *
+     * @param email - actual mailbox that needs to be checked
+     */
     public void checkMailinatorInbox(String email) {
         inputUrl("https://mailinator.com");
         waitForPageToLoad();
@@ -65,15 +73,20 @@ public class SharedMethods extends FrameworkSetup {
         sleepTime(1000);
     }
 
+    /**
+     * Method that empties input element if something is already inserted in it
+     *
+     * @param by the locator used to identify the element
+     */
     public void clearField(By by) {
         click(by);
         driver().findElement(by).clear();
     }
 
     /**
-     * Click on element by providing UI element
+     * Click on element. Performs most stable click - the one from Actions class
      *
-     * @param by
+     * @param by - the locator used to identify the element
      */
     public void click(By by) {
         sleepTime(1000);
@@ -82,10 +95,10 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     /**
-     * Provide time needed for sleep BEFORE clicking and  click on element by providing locator of element
+     * Provide time needed for sleep BEFORE clicking and click on element by providing locator of element
      *
      * @param msTime - define sleepTime
-     * @param by
+     * @param by     - the locator used to identify the element
      */
     public void click(long msTime, By by) {
         sleepTime(msTime);
@@ -93,10 +106,10 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     /**
-     * Click on element by providing locator of element and Provide time needed for sleep AFTER clicking and
+     * Click on element by providing locator of element and Provide time needed for sleep AFTER clicking occurs
      *
      * @param msTime - define sleepTime
-     * @param by
+     * @param by     - the locator used to identify the element
      */
     public void click(By by, long msTime) {
         click(by);
@@ -106,8 +119,8 @@ public class SharedMethods extends FrameworkSetup {
     /**
      * Wait, then click on element by UI locator and then wait again
      *
-     * @param msTimeBefore - hor long to wait for before clicking
-     * @param by           - what to click
+     * @param msTimeBefore - how long to wait for before clicking
+     * @param by           - the locator used to identify the element
      * @param msTimeAfter  - how long to wait after click
      */
     public void click(long msTimeBefore, By by, long msTimeAfter) {
@@ -127,50 +140,38 @@ public class SharedMethods extends FrameworkSetup {
         new WebDriverWait(driver(), Duration.ofMillis(timeout)).until(ExpectedConditions.visibilityOfElementLocated(byToWaitFor));
     }
 
+    /**
+     * Method used to wait for page to load after element is clicked
+     *
+     * @param by - the locator used to identify the element
+     */
     public void clickAndWaitPageToLoad(By by) {
         click(by);
         waitForPageToLoad();
         sleepTime(1000);
     }
 
+    /**
+     * Method used to achieve clicking on actual XY pixel on screen
+     *
+     * @param by - the locator used to identify the element
+     * @param x  - X axis point
+     * @param y  - Y axis point
+     */
     public void clickByPixel(By by, int x, int y) {
         Actions builder = new Actions(driver());
         builder.moveToElement(driver().findElement(by), x, y).click().build().perform();
     }
 
+    /**
+     * Method used to perform JS click on elements
+     *
+     * @param by - the locator used to identify the element
+     */
     public void clickJs(By by) {
         WebElement element = driver().findElement(by);
         JavascriptExecutor jse = (JavascriptExecutor) driver();
         jse.executeScript("arguments[0].click();", element);
-        sleepTime(1000);
-    }
-
-    /**
-     * Selects option from React component IF NO SCROLL IS DISPLAYED
-     *
-     * @param optionText
-     */
-    public void clickReactSelect(String optionText) {
-        sleepTime(1000);
-        click(By.xpath("//div[contains(@id, 'react-select')]//span[contains(text(), '" + optionText + "')]"));
-        sleepTime(1000);
-    }
-
-    /**
-     * Selects option from dropdown after clicking on some element and searching for optionText. If that optionText cannot be found error will be thrown
-     *
-     * @param clickBy    - what to click on
-     * @param optionText - what to search from and what option to choose
-     */
-    public void clickReactSelectAfterSearch(By clickBy, String optionText) {
-        sleepTime(1000);
-        input(clickBy, optionText);
-        sleepTime(1000);
-        try {
-            clickReactSelect(optionText);
-        } catch (Exception e) {
-            Assert.fail("No such option present, you tried to select: " + optionText + " and it is not part of the: " + clickBy + " element.");
-        }
         sleepTime(1000);
     }
 
@@ -271,34 +272,6 @@ public class SharedMethods extends FrameworkSetup {
         action.moveToElement(driver().findElement(By.xpath("//*[contains(text(), '" + textToClickOn + "')]"))).click().build().perform();
     }
 
-    /**
-     * Specific for elements whose dropdown opens while hovering. On hover, it randomly chooses one of the elements from dropdown.
-     *
-     * @param byHover - element that is being hovered
-     */
-    public void hoverAndClickRandom(By byHover) {
-        waitForElementClickable(byHover);
-        sleepTime(300);
-        Actions action = new Actions(driver());
-        action.moveToElement(driver().findElement(byHover)).build().perform();
-        waitForElementVisible(By.cssSelector(".infinite-dropdown.show"));
-        List<WebElement> optionItems = driver().findElements(By.xpath("//div[contains(@class,'show')]//div[contains(@class,'dropdown')]"));
-
-        int valMax = optionItems.size() - 1;
-        int value;
-        System.out.println("Number of options is: " + valMax);
-        if (optionItems.isEmpty()) {
-            log.error("List is empty");
-        }
-
-        if (valMax < 1) {
-            value = 0;
-        } else {
-            value = 1 + randomNum.nextInt(valMax);
-        }
-        optionItems.get(value).click();
-    }
-
     public void hoverOver(By by) {
         waitForElementPresent(by);
         new Actions(driver()).moveToElement(driver().findElement(by)).perform();
@@ -342,14 +315,6 @@ public class SharedMethods extends FrameworkSetup {
         click(option);
     }
 
-    public void selectAntOption(By clickBy, By clickBy1, String optionText) {
-        sleepTime(500);
-        click(clickBy);
-        input(clickBy1, optionText);
-        click(By.xpath("//span[@title='" + optionText + "']"));
-        click(clickBy);
-    }
-
     public void selectRandomDropdownValue(By dropdown, By input) {
         int value = Integer.parseInt(getRandomNumber(1, 10));
         click(dropdown);
@@ -388,11 +353,6 @@ public class SharedMethods extends FrameworkSetup {
         return driver().findElement(by).isSelected();
     }
 
-    public boolean isCheckboxNotChecked(By by) {
-        waitForElementVisible(by);
-        return !isCheckboxChecked(by);
-    }
-
     /**
      * Function that returns true if option is found inside select options and false if no options matching are found
      *
@@ -416,14 +376,6 @@ public class SharedMethods extends FrameworkSetup {
         return isFound;
     }
 
-    public boolean isElementDisabled(By by) {
-        return !isElementEnabled(by);
-    }
-
-    public boolean isElementDisabledReact(By by) {
-        return driver().findElement(by).getAttribute("class").contains("disabled");
-    }
-
     public boolean isElementDisplayed(By by) {
         return getElement(by).isDisplayed();
     }
@@ -431,21 +383,6 @@ public class SharedMethods extends FrameworkSetup {
     public boolean isElementEnabled(By by) {
         waitForElementVisible(by);
         return getElement(by).isEnabled();
-    }
-
-    /**
-     * Checks if element is not present. It waits implicitly for 30seconds for element to appear, if no element is displayed false is returned
-     *
-     * @param by
-     * @return true if element is not present
-     */
-    public boolean isElementNotPresent(By by) {
-        boolean value;
-        driver().manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
-        List<WebElement> elementList = driver().findElements(by);
-        value = elementList.isEmpty();
-        driver().manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
-        return value;
     }
 
     public boolean isElementPresent(By by) {
@@ -460,11 +397,6 @@ public class SharedMethods extends FrameworkSetup {
         waitForElementVisible(by);
         String checked = driver().findElement(by).getAttribute("checked");
         return checked.contains("true");
-    }
-
-    public boolean isFieldNotReadOnly(By by) {
-        waitForElementVisible(by);
-        return !isFieldReadOnly(by);
     }
 
     public boolean isFieldReadOnly(By by) {
@@ -662,44 +594,6 @@ public class SharedMethods extends FrameworkSetup {
         js.executeScript("window.scrollBy(0, document.body.scrollHeight)", "");
     }
 
-    public void scrollToEndOfTable() {
-        waitForElementPresent(By.xpath("//div[contains(@class, 'table-container')]"));
-
-        JavascriptExecutor jse = (JavascriptExecutor) driver();
-        String jsElementIsScrollable =
-                "return arguments[0].scrollHeight > arguments[0].offsetHeight;";
-        WebElement container = driver().findElement(By.xpath("//div[contains(@class, 'table-container')]"));
-        Boolean isScrollable = (Boolean) jse.executeScript(jsElementIsScrollable, container);
-
-        if (Boolean.TRUE.equals(isScrollable)) {
-            log.info("Table is scrollable.");
-            jse.executeScript(
-                    "var timer = setInterval(myFunction, 1000);" +
-                            "var elem = document.querySelector('[class*=\"table-container\"]');" +
-                            "var oldHeight = 0;" +
-                            "var newHeight = null;" +
-                            "function myFunction() {" +
-                            "  if(oldHeight == newHeight) {" +
-                            " clearInterval(timer);" +
-                            "  return;" +
-                            " } else {" +
-                            "console.log(\"Old + \" + oldHeight + \"  new H >> \" + newHeight);" +
-                            " oldHeight = elem.scrollHeight;" +
-                            "elem.scroll({ top: elem.scrollHeight, behavior: \"smooth\"});" +
-                            "setTimeout(() => {" +
-                            "newHeight = elem.scrollHeight;" +
-                            "console.log(newHeight)" +
-                            "}, 10000)" +
-                            "}" +
-                            "}"
-            );
-            sleepTime(10000);
-        } else {
-            log.info("Table not scrollable");
-            sleepTime(1000);
-        }
-    }
-
     public void scrollToTop() {
         driver().findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL, Keys.HOME);
     }
@@ -712,23 +606,6 @@ public class SharedMethods extends FrameworkSetup {
     public void setBrowserSize(int width, int height) {
         Dimension d = new Dimension(width, height);
         driver().manage().window().setSize(d);
-    }
-
-    public void emulateMobileDevice(String mobileDevice) {
-        closeBrowser();
-        Map<String, String> mobileEmulation = new HashMap<>();
-        mobileEmulation.put("deviceName", mobileDevice);
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.setExperimentalOption("mobileEmulation", mobileEmulation);
-        WebDriver driver = driver();
-        System.setProperty("webdriver.chrome.driver", "drivers/chromedriver.exe");
-        Map<String, Object> chromePrefs = new HashMap<>();
-        chromePrefs.put("profile.default_content_settings.popups", 0);
-        chromePrefs.put("download.default_directory", fileDirectory);
-        chromeOptions.addArguments("--incognito");
-        driver = new ChromeDriver(chromeOptions);
-        DriverThreadLocal.setDriver(driver);
-        focusActiveWindow();
     }
 
     /*
@@ -841,28 +718,6 @@ public class SharedMethods extends FrameworkSetup {
 
     public void uploadTwoFiles(String fileName1, String fileName2) {
         driver().findElement(By.xpath(" //input[@type='file']")).sendKeys(fileDirectory + "\\" + fileName1 + "\n " + fileDirectory + "\\" + fileName2);
-    }
-
-    /**
-     * This method validates the value between the data in excel and the table.
-     * With the assertion, we validate that the difference in the tables is not more than 1.
-     *
-     * @throws IOException
-     */
-
-    public void validateExcel() throws IOException {
-        //COUNT EXCEL TABLE ROWS
-        FileInputStream fis = new FileInputStream(fileDirectory + findLastDownloadedFile());
-        XSSFWorkbook workbook = new XSSFWorkbook(fis);
-        XSSFSheet sheet = workbook.getSheet("Sheet0");
-        int excelRowNum = sheet.getLastRowNum();
-        log.info("Total number of rows in the excel is {}", excelRowNum);
-        //COUNT WEB TABLE ROWS
-        scrollToEndOfTable();
-        List<WebElement> rowsTable = driver().findElements(By.cssSelector("tr.ant-table-row"));
-        int tableRowCount = rowsTable.size();
-        log.info("Number of rows in table: {}", tableRowCount);
-        Assert.assertTrue(Math.abs(excelRowNum - tableRowCount) <= 1, "Number of rows in excel and table do not match");
     }
 
     /*

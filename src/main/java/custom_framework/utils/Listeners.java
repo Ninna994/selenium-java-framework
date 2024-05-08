@@ -3,10 +3,12 @@ package custom_framework.utils;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import io.qameta.allure.Allure;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Listeners extends SharedMethods implements ITestListener {
@@ -31,7 +33,9 @@ public class Listeners extends SharedMethods implements ITestListener {
         extentTest.get().fail(result.getThrowable());
         String testMethodName = result.getMethod().getMethodName();
         try {
+            String screenshotPath = getScreenshotPath(testMethodName);
             extentTest.get().addScreenCaptureFromPath(getScreenshotPath(testMethodName), testMethodName);
+            Allure.addAttachment(testMethodName + " - Failure Screenshot", new FileInputStream(screenshotPath));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +46,9 @@ public class Listeners extends SharedMethods implements ITestListener {
         extentTest.get().log(Status.SKIP, "Test skipped");
         String testMethodName = result.getMethod().getMethodName();
         try {
+            String screenshotPath = getScreenshotPath(testMethodName);
             extentTest.get().addScreenCaptureFromPath(getScreenshotPath(testMethodName), testMethodName);
+            Allure.addAttachment(testMethodName + " - Skip Screenshot", new FileInputStream(screenshotPath));
         } catch (IOException e) {
             e.printStackTrace();
         }

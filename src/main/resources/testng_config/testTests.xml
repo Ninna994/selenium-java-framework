@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Doxio Regression Test" configfailurepolicy="continue" verbose="1" parallel="classes" thread-count="10">
+    <listeners>
+        <listener class-name="custom_framework.utils.Listeners"/>
+        <listener class-name="custom_framework.utils.AnnotationTransformer"/>
+    </listeners>
+    <test name="Doxio Regression Test">
+        <groups>
+            <run>
+                <exclude name="Broken"/>
+                <exclude name="Deprecated"/>
+                <exclude name="Ignore"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="custom_framework.apps.app_name.test_cases.TestTest"/>
+        </classes>
+    </test>
+</suite>
