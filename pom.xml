@@ -102,6 +102,13 @@
       <version>2.20.0</version> <!-- Use the same version as log4j-api -->
     </dependency>
 
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.28</version>
+    </dependency>
+
+
     <!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-testng -->
     <dependency>
       <groupId>io.qameta.allure</groupId>
