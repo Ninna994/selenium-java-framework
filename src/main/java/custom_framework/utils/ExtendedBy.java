@@ -1,6 +1,7 @@
 package custom_framework.utils;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.locators.RelativeLocator;
 
 public class ExtendedBy {
 
@@ -70,6 +71,30 @@ public class ExtendedBy {
 
     public By partialClass(String param) {
         return By.xpath(("//*[contains(@class, '" + param + "')]"));
+    }
+
+    /*
+     * -------------------- RELATIVE LOCATORS SELENIUM 4 -------------------- //
+     */
+
+    public By below(By locator, By relativeTo) {
+        return RelativeLocator.with(locator).below(relativeTo);
+    }
+
+    public By above(By locator, By relativeTo) {
+        return RelativeLocator.with(locator).above(relativeTo);
+    }
+
+    public By toLeftOf(By locator, By relativeTo) {
+        return RelativeLocator.with(locator).toLeftOf(relativeTo);
+    }
+
+    public By toRightOf(By locator, By relativeTo) {
+        return RelativeLocator.with(locator).toRightOf(relativeTo);
+    }
+
+    public By near(By locator, By relativeTo) {
+        return RelativeLocator.with(locator).near(relativeTo);
     }
 
 }
