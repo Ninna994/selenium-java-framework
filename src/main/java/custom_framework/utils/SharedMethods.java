@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -757,5 +758,20 @@ public class SharedMethods extends FrameworkSetup {
     public String getDateTimeStamp() {
         return new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss").format(new Timestamp(System.currentTimeMillis()));
     }
+
+    /*
+     * -------------------- SELENIUM 4 -------------------- //
+     */
+
+    public void mockGeolocation(double latitude, double longitude, int accuracy) {
+        Map coordinates = Map.of(
+                "latitude", latitude,
+                "longitude", longitude,
+                "accuracy", accuracy
+        );
+
+        ((ChromeDriver) driver()).executeCdpCommand("Emulation.setGeolocationOverride", coordinates);
+    }
+
 
 }
