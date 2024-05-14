@@ -18,4 +18,9 @@
 
 ## Allure Setup and report generator
 
-* To run allure report use `allure serve command`
+* To run allure report use in target/ `allure serve`
+
+http://webdriveruniversity.com/
+https://demoqa.com/
+https://the-internet.herokuapp.com/
+https://automationbookstore.dev/
