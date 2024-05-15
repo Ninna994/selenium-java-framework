@@ -1,6 +1,5 @@
 # Ignore settings.properties
 settings.properties
-automationbookstore/*
 # IDE
 .idea/
 
