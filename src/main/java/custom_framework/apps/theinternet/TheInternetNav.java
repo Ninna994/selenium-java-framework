@@ -13,7 +13,10 @@ public class TheInternetNav extends SharedMethods {
     }
 
     public void navAddRemoveElements() {
-        visitTheInternet();
         clickAndWaitPageToLoad(new TheInternetUi().theAddRemoveElementsLink());
+    }
+
+    public void navBasicAuth() {
+        click(new TheInternetUi().theBasicAuthLink());
     }
 }

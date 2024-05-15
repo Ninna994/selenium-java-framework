@@ -1,17 +1,20 @@
 package custom_framework.apps.theinternet.test_cases;
 
 import custom_framework.apps.theinternet.page_flows.TheInternetFlows;
+import io.qameta.allure.Description;
+import io.qameta.allure.Owner;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TheAddRemoveElementsTest extends TheInternetFlows {
+public class AddRemoveElementsTest extends TheInternetFlows {
     private static final String DELETE = "Delete";
 
     @Test
+    @Description("Click Add Element button and Confirm that in #elements there is one button with text Delete")
+    @Owner("Ninna994")
     public void testAddElement() {
-        // Click Add Element button and Confirm that in #elements there is one button with text Delete
         navAddRemoveElements();
-        Assert.assertEquals(verifyText(thePageTitle()), "Add/Remove Elements", "Title is not right");
+        verifyPageTitle("Add/Remove Elements");
 
         click(theButtonWithText("Add Element"));
         waitForElementVisible(theButtonWithText(DELETE));
@@ -21,10 +24,11 @@ public class TheAddRemoveElementsTest extends TheInternetFlows {
     }
 
     @Test
+    @Description("Add 10 elements and delete them all")
+    @Owner("Ninna994")
     public void testAddElementsAndDelete() {
-        // Add 10 elements and delete them all
         navAddRemoveElements();
-        Assert.assertEquals(verifyText(thePageTitle()), "Add/Remove Elements", "Title is not right");
+        verifyPageTitle("Add/Remove Elements");
 
         int numberOfElements = 5;
         for (int i = 0; i < numberOfElements; i++) {

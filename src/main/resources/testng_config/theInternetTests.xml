@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Test Project - The Internet Heroku app -  Regression Test" configfailurepolicy="continue" verbose="1" parallel="classes" thread-count="10">
+    <listeners>
+        <listener class-name="custom_framework.utils.Listeners"/>
+        <listener class-name="custom_framework.utils.AnnotationTransformer"/>
+    </listeners>
+    <test name="Test Project - The Internet Heroku app -  Regression Test">
+        <groups>
+            <run>
+                <exclude name="Broken"/>
+                <exclude name="Deprecated"/>
+                <exclude name="Ignore"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="custom_framework.apps.theinternet.test_cases"/>
+        </packages>
+    </test>
+</suite>
