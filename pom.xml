@@ -7,7 +7,6 @@
     <groupId>customFramework</groupId>
     <artifactId>seleniumJavaFramework</artifactId>
     <version>1.0-SNAPSHOT</version>
-
     <name>Custom Automation Project</name>
 
     <properties>
@@ -18,19 +17,8 @@
         <aspectj.version>1.9.20.1</aspectj.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-bom</artifactId>
-                <version>2.24.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
-
+        <!--Selenium WebDriver-->
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
@@ -38,6 +26,7 @@
             <version>4.20.0</version>
         </dependency>
 
+        <!-- ExtentReports for Reporting -->
         <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
         <dependency>
             <groupId>com.aventstack</groupId>
@@ -45,6 +34,7 @@
             <version>5.0.9</version>
         </dependency>
 
+        <!-- TestNG for Testing Framework -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -52,6 +42,7 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Commons IO for IO Operations -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -59,6 +50,7 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- JavaFaker for Generating Fake Data -->
         <!-- https://mvnrepository.com/artifact/com.github.javafaker/javafaker -->
         <dependency>
             <groupId>com.github.javafaker</groupId>
@@ -66,6 +58,7 @@
             <version>1.0.2</version>
         </dependency>
 
+        <!-- Apache POI for Excel File Handling -->
         <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -80,6 +73,7 @@
             <version>5.2.2</version>
         </dependency>
 
+        <!-- SLF4J Simple for Logging (Test Scope) -->
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -88,6 +82,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Log4j for Logging -->
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -101,12 +96,14 @@
             <version>2.20.0</version> <!-- Use the same version as log4j-api -->
         </dependency>
 
+        <!-- Lombok for Reducing Boilerplate Code -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.28</version>
         </dependency>
 
+        <!-- Allure TestNG Integration -->
         <!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-testng -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
@@ -115,6 +112,19 @@
         </dependency>
 
     </dependencies>
+
+    <!--Manage versions of dependencies to ensure consistency across the project.-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-bom</artifactId>
+                <version>2.24.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <resources>
@@ -125,6 +135,7 @@
         </resources>
         <pluginManagement>
             <plugins>
+                <!--Runs the unit tests during the test phase of the build lifecycle.-->
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.1</version>
@@ -134,34 +145,42 @@
                         </suiteXmlFiles>
                     </configuration>
                 </plugin>
+                <!--Cleans up the target directory before building the project.-->
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
+                <!--Manages the resources of the project.-->
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.0.2</version>
                 </plugin>
+                <!-- Compiles the source code of the project.-->
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.0</version>
                 </plugin>
+                <!--Builds a JAR file from the project.-->
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.0.2</version>
                 </plugin>
+                <!--Installs the built artifact into the local repository.-->
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>2.5.2</version>
                 </plugin>
+                <!--Deploys the built artifact to a remote repository.-->
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8.2</version>
                 </plugin>
+                <!--Generates a site for the project.-->
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.7.1</version>
                 </plugin>
+                <!--Generates project reports such as dependencies, plugins, etc.-->
                 <plugin>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>3.0.0</version>
