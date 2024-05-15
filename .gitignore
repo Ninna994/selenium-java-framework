@@ -1,3 +1,6 @@
+# Ignore settings.properties
+settings.properties
+
 # IDE
 .idea/
 
@@ -46,5 +49,3 @@ allure-results/
 *.png
 *.jpg
 *.gif
-
-settings.properties
