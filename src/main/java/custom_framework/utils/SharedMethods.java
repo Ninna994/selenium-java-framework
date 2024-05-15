@@ -7,7 +7,17 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.devtools.DevTools;
+import org.openqa.selenium.devtools.v124.emulation.Emulation;
+import org.openqa.selenium.devtools.v124.network.Network;
+import org.openqa.selenium.devtools.v124.network.model.ConnectionType;
+import org.openqa.selenium.devtools.v124.network.model.Headers;
+import org.openqa.selenium.devtools.v124.performance.Performance;
+import org.openqa.selenium.devtools.v124.performance.model.Metric;
+import org.openqa.selenium.devtools.v124.security.Security;
+import org.openqa.selenium.devtools.v85.fetch.Fetch;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -388,8 +398,9 @@ public class SharedMethods extends FrameworkSetup {
 
     public boolean isElementPresent(By by) {
         try {
-            return driver().findElement(by).isDisplayed();
-        } catch (Exception e) {
+            driver().findElement(by);
+            return true;
+        } catch (NoSuchElementException e) {
             return false;
         }
     }
@@ -764,14 +775,143 @@ public class SharedMethods extends FrameworkSetup {
      */
 
     public void mockGeolocation(double latitude, double longitude, int accuracy) {
-        Map coordinates = Map.of(
-                "latitude", latitude,
-                "longitude", longitude,
-                "accuracy", accuracy
-        );
 
-        ((ChromeDriver) driver()).executeCdpCommand("Emulation.setGeolocationOverride", coordinates);
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+        devTools.send(Emulation.setGeolocationOverride(Optional.of(latitude),
+                Optional.of(longitude),
+                Optional.of(accuracy)));
+        driver().get("https://my-location.org/");
+        sleepTime(5000);
     }
 
+    /*
+     * -------------------- NETWORK METHODS -------------------- //
+     */
+
+    public void network() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        driver().get("https://manytools.org/http-html-text/http-request-headers/");
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+
+        Headers headers = new Headers(Collections.singletonMap("testing", "selenium"));
+        devTools.send(Network.setExtraHTTPHeaders(headers));
+
+        driver().get("https://manytools.org/http-html-text/http-request-headers/");
+        driver().quit();
+    }
+
+    public void captureRequest() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        // enable network capture
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+        devTools.addListener(Network.requestWillBeSent(), requestWillBeSent -> {
+            System.out.println("Request url: " + requestWillBeSent.getDocumentURL());
+            System.out.println("Request method: " + requestWillBeSent.getRequest().getMethod());
+            System.out.println("Request Headers: " + requestWillBeSent.getRequest().getHeaders().toString());
+            System.out.println("-------------------------------------------------");
+        });
+
+        // navigate to url
+        inputUrl("https://rahulshettyacademy.com/#/index");
+    }
+
+    public void captureResponse() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+        devTools.addListener(Network.responseReceived(), responseReceived -> {
+            System.out.println("Response Url => " + responseReceived.getResponse().getUrl());
+            System.out.println("Response Status => " + responseReceived.getResponse().getStatus());
+            System.out.println("Response Headers => " + responseReceived.getResponse().getHeaders().toString());
+            System.out.println("Response MIME Type => " + responseReceived.getResponse().getMimeType());
+
+            System.out.println("------------------------------------------------------");
+        });
+
+        // navigate to url
+        inputUrl("https://google.com");
+    }
+
+    public void blockUrls() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+
+        devTools.send(Network.setBlockedURLs(List.of("*.css"))); // Blocks all css files
+            /*
+             * Block request by URL below code
+             devTool.send(Network.setBlockedURLs( List.of(
+             "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+              )));
+
+             */
+
+        devTools.addListener(Network.loadingFailed(), loadingFailed -> {
+            System.out.println("Blocking reason: " + loadingFailed.getBlockedReason().get());
+        });
+
+        inputUrl("https://rahulshettyacademy.com/#/index");
+        sleepTime(5000);
+    }
+
+    public void bypassInsecureWebsite() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+        devTools.send(Security.setIgnoreCertificateErrors(true));
+
+        inputUrl("https://untrusted-root.badssl.com/");
+    }
+
+    public void emulateNetwork() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+        devTools.send(Network.emulateNetworkConditions(false, 20, 20, 50, Optional.of(ConnectionType.CELLULAR3G), Optional.empty(), Optional.empty(), Optional.empty()));
+        inputUrl("https://rahulshettyacademy.com/#/index");
+    }
+
+    public void mockAPIRequest() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        devTools.send(Fetch.enable(Optional.empty(), Optional.empty()));
+
+        devTools.addListener(Fetch.requestPaused(), req -> {
+            if (req.getRequest().getUrl().contains("=Shetty")) {
+                String mock = req.getRequest().getUrl().replace("=shetty", "=Unknown");
+                devTools.send(Fetch.continueRequest(req.getRequestId(), Optional.of(mock), Optional.empty(),
+                        Optional.empty(), Optional.empty()));
+            } else {
+                devTools.send(Fetch.continueRequest(req.getRequestId(), Optional.of(req.getRequest().getUrl()),
+                        Optional.empty(), Optional.empty(), Optional.empty()));
+            }
+        });
+
+        driver().get("https://www.rahulshettyacademy.com/angularAppdemo/");
+
+        driver().findElement(By.xpath("//button[contains(text(),'Virtual Library')] ")).click();
+
+    }
+
+    public void metrics() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        devTools.send(Performance.enable(Optional.empty()));
+        List<Metric> metricList = devTools.send(Performance.getMetrics());
+        driver().get("https://opensource.saucelabs.com/");
+
+        for (Metric m : metricList) {
+            System.out.println(m.getName() + " = " + m.getValue());
+        }
+
+    }
 
 }
