@@ -19,4 +19,8 @@ public class TheInternetNav extends SharedMethods {
     public void navBasicAuth() {
         click(new TheInternetUi().theBasicAuthLink());
     }
+
+    public void navBrokenImages() {
+        clickAndWaitPageToLoad(new TheInternetUi().theBrokenImagesLink());
+    }
 }

@@ -11,6 +11,10 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.tagName("h3");
     }
 
+    public By theImageElement() {
+        return By.tagName("img");
+    }
+
     public By theButtonWithText(String text) {
         return By.xpath("//button[contains(text(), '" + text + "')]");
     }
@@ -29,7 +33,6 @@ public class TheInternetUi extends TheInternetCommonFlows {
     public By theBrokenImagesLink() {
         return By.href("/broken_images");
     }
-
 
 
 }
