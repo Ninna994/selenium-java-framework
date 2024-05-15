@@ -46,3 +46,5 @@ allure-results/
 *.png
 *.jpg
 *.gif
+
+settings.properties
