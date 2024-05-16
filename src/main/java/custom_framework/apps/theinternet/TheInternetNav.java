@@ -23,4 +23,8 @@ public class TheInternetNav extends SharedMethods {
     public void navBrokenImages() {
         clickAndWaitPageToLoad(new TheInternetUi().theBrokenImagesLink());
     }
+
+    public void navChallengingDOM() {
+        clickAndWaitPageToLoad(new TheInternetUi().theChallengingDOMLink());
+    }
 }

@@ -34,5 +34,23 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.href("/broken_images");
     }
 
+    public By theChallengingDOMLink() {
+        return By.href("/challenging_dom");
+    }
 
+    /*
+     * -------------------- THE CHALLENGING DOM -------------------- //
+     */
+
+    public By theElementInTable(int row, int column) {
+        return By.xpath("//table//tbody//tr[" + row + "]//td[" + column + "]");
+    }
+
+    public By theFirstButton() {
+        return By.xpath("(//div//a)[2]");
+    }
+
+    public By theCanvas() {
+        return By.id("canvas");
+    }
 }

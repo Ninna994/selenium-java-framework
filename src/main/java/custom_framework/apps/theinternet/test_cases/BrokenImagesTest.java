@@ -34,6 +34,6 @@ public class BrokenImagesTest extends TheInternetFlows {
     @Owner("Ninna994")
     public void testImageCount() {
         navBrokenImages();
-        Assert.assertEquals(verifyCount(theImageElement()), 3, "There should be 3 images present.");
+        Assert.assertEquals(verifyCount(theImageElement()), 4, "There should be 4 images present.");
     }
 }

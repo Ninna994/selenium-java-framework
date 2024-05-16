@@ -251,6 +251,22 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     /**
+     * Method for taking element screenshots by providing locator
+     * @param by - locator of element
+     */
+    public void getScreenshotOfElement(By by) {
+        try {
+            File screenshot = driver().findElement(by).getScreenshotAs(OutputType.FILE);
+            File destinationFile = new File(screenshotDestinationReporting + fileSeparator + "screenshots" +fileSeparator + "element_screenshot" + getTimestamp() + ".png");
+            FileUtils.copyFile(screenshot, destinationFile);
+
+            log.info("Screenshot of the element was saved as: {}" , destinationFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Screenshot method for adding screenshots to reports
      *
      * @param testCaseName
