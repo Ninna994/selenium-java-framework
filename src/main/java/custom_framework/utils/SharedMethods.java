@@ -258,15 +258,16 @@ public class SharedMethods extends FrameworkSetup {
 
     /**
      * Method for taking element screenshots by providing locator
+     *
      * @param by - locator of element
      */
     public void getScreenshotOfElement(By by) {
         try {
             File screenshot = driver().findElement(by).getScreenshotAs(OutputType.FILE);
-            File destinationFile = new File(screenshotDestinationReporting + fileSeparator + "screenshots" +fileSeparator + "element_screenshot" + getTimestamp() + ".png");
+            File destinationFile = new File(screenshotDestinationReporting + fileSeparator + "screenshots" + fileSeparator + "element_screenshot" + getTimestamp() + ".png");
             FileUtils.copyFile(screenshot, destinationFile);
 
-            log.info("Screenshot of the element was saved as: {}" , destinationFile);
+            log.info("Screenshot of the element was saved as: {}", destinationFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -350,17 +351,24 @@ public class SharedMethods extends FrameworkSetup {
         click(option);
     }
 
+    public void selectByIndex(By dropdown, int index) {
+        sleepTime(1000);
+        waitForElementClickable(dropdown);
+        Select select = new Select(driver().findElement(dropdown));
+        select.selectByIndex(index);
+    }
+
+    public void selectByValue(By by, String value) {
+        waitForElementClickable(by);
+        Select select = new Select(driver().findElement(by));
+        select.selectByValue(value);
+    }
+
     public void selectRandomDropdownValue(By dropdown, By input) {
         int value = Integer.parseInt(getRandomNumber(1, 10));
         click(dropdown);
         List<WebElement> listItems = driver().findElements(input);
         listItems.get(value).click();
-    }
-
-    public void selectValue(By by, String value) {
-        waitForElementClickable(by);
-        Select select = new Select(driver().findElement(by));
-        select.selectByValue(value);
     }
 
     public void uncheck(By by) {

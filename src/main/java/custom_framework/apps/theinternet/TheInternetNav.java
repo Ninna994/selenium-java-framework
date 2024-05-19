@@ -40,13 +40,15 @@ public class TheInternetNav extends SharedMethods {
         clickAndWaitPageToLoad(new TheInternetUi().theDigestAuthLink());
     }
 
-    /*public void navCheckboxes() {
-        clickAndWaitPageToLoad(new TheInternetUi().theCheckboxesLink());
-
+    public void navTheDisappearingElements() {
+        clickAndWaitPageToLoad(new TheInternetUi().theDisappearingElementsLink());
     }
 
-    public void navCheckboxes() {
-        clickAndWaitPageToLoad(new TheInternetUi().theCheckboxesLink());
+    public void navDragAndDrop() {
+        clickAndWaitPageToLoad(new TheInternetUi().theDragAndDropLink());
+    }
 
-    }*/
+    public void navDropdown() {
+        clickAndWaitPageToLoad(new TheInternetUi().theDropdownLink());
+    }
 }

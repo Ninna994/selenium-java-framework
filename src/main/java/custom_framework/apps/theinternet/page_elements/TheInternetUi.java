@@ -50,6 +50,17 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.href("/digest_auth");
     }
 
+    public By theDisappearingElementsLink() {
+        return By.href("/disappearing_elements");
+    }
+
+    public By theDragAndDropLink() {
+        return By.href("/drag_and_drop");
+    }
+
+    public By theDropdownLink() {
+        return By.href("/dropdown");
+    }
 
     /*
      * -------------------- THE CHALLENGING DOM -------------------- //
@@ -82,4 +93,40 @@ public class TheInternetUi extends TheInternetCommonFlows {
     public By theHotspotContainer() {
         return By.id("hot-spot");
     }
+
+    /*
+     * -------------------- DISAPPEARING ELEMENTS -------------------- //
+     */
+
+    public By theNavElements() {
+        return By.cssSelector("li a");
+    }
+
+    /*
+     * -------------------- DRAG AND DROP -------------------- //
+     */
+
+    public By theADragElement() {
+        return By.id("column-a");
+    }
+
+    public By theBDragElement() {
+        return By.id("column-b");
+    }
+
+    public By theHeaderElement() {
+        return By.tagName("header");
+    }
+
+    /*
+     * -------------------- DROPDOWN -------------------- //
+     */
+    public By theDropdown() {
+        return By.id("dropdown");
+    }
+
+    public By theOption() {
+        return By.tagName("option");
+    }
+
 }
