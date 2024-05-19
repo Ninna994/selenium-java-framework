@@ -51,4 +51,61 @@ public class TheInternetNav extends SharedMethods {
     public void navDropdown() {
         clickAndWaitPageToLoad(new TheInternetUi().theDropdownLink());
     }
+
+    public void navDynamicContent() {
+        clickAndWaitPageToLoad(new TheInternetUi().theDynamicContentLink());
+    }
+
+    public void navDynamicControls() {
+        clickAndWaitPageToLoad(new TheInternetUi().theDynamicControlsLink());
+    }
+
+    public void navDynamicLoading() {
+        clickAndWaitPageToLoad(new TheInternetUi().theDynamicLoadingLink());
+    }
+
+    public void navEntryAd() {
+        clickAndWaitPageToLoad(new TheInternetUi().theEntryAdLink());
+    }
+
+    public void navExitIntent() {
+        clickAndWaitPageToLoad(new TheInternetUi().theExitIntentLink());
+    }
+
+    public void navFileDownload() {
+        clickAndWaitPageToLoad(new TheInternetUi().theFileDownloadLink());
+    }
+
+    public void navFileUpload() {
+        clickAndWaitPageToLoad(new TheInternetUi().theFileUploadLink());
+    }
+
+    public void navFormAuthentication() {
+        clickAndWaitPageToLoad(new TheInternetUi().theFormAuthenticationLink());
+    }
+
+    public void navFrames() {
+        clickAndWaitPageToLoad(new TheInternetUi().theFramesLink());
+    }
+
+    public void navGeolocation() {
+        clickAndWaitPageToLoad(new TheInternetUi().theGeolocationLink());
+    }
+
+    public void navHovers() {
+        clickAndWaitPageToLoad(new TheInternetUi().theHoversLink());
+    }
+
+    public void navJSAlerts() {
+        clickAndWaitPageToLoad(new TheInternetUi().theJSAlertsLink());
+    }
+
+    public void navShadowDom() {
+        clickAndWaitPageToLoad(new TheInternetUi().theShadowDomLink());
+    }
+
+    public void navStatusCodes() {
+        clickAndWaitPageToLoad(new TheInternetUi().theStatusCodesLink());
+    }
+
 }

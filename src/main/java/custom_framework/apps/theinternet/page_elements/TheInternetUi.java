@@ -62,6 +62,62 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.href("/dropdown");
     }
 
+    public By theDynamicContentLink() {
+        return By.href("/dynamic_content");
+    }
+
+    public By theDynamicControlsLink() {
+        return By.href("/dynamic_controls");
+    }
+
+    public By theDynamicLoadingLink() {
+        return By.href("/loading");
+    }
+
+    public By theEntryAdLink() {
+        return By.href("/entry_ad");
+    }
+
+    public By theExitIntentLink() {
+        return By.href("/exit_intent");
+    }
+
+    public By theFileDownloadLink() {
+        return By.href("/file_download");
+    }
+
+    public By theFileUploadLink() {
+        return By.href("/file_upload");
+    }
+
+    public By theFormAuthenticationLink() {
+        return By.href("/login");
+    }
+
+    public By theFramesLink() {
+        return By.href("/frames");
+    }
+
+    public By theGeolocationLink() {
+        return By.href("/geolocation");
+    }
+
+    public By theHoversLink() {
+        return By.href("/hovers");
+    }
+
+    public By theJSAlertsLink() {
+        return By.href("/javascript_alerts");
+    }
+
+    public By theShadowDomLink() {
+        return By.href("/shadowdom");
+    }
+
+    public By theStatusCodesLink() {
+        return By.href("/status_codes");
+    }
+
     /*
      * -------------------- THE CHALLENGING DOM -------------------- //
      */
@@ -125,8 +181,5 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.id("dropdown");
     }
 
-    public By theOption() {
-        return By.tagName("option");
-    }
 
 }
