@@ -188,6 +188,12 @@ public class SharedMethods extends FrameworkSetup {
         sleepTime(1000);
     }
 
+    public void contextClickOnElement(By by) {
+        WebElement element = driver().findElement(by);
+        Actions actions = new Actions(driver());
+        actions.contextClick(element).perform();
+    }
+
     public void dragAndDrop(By by1, By by2) {
         WebElement fromElement = driver().findElement(by1);
         WebElement toElement = driver().findElement(by2);

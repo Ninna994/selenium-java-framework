@@ -74,4 +74,12 @@ public class TheInternetUi extends TheInternetCommonFlows {
     public By theCheckbox() {
         return By.type("checkbox");
     }
+
+    /*
+     * -------------------- CONTEXT MENU -------------------- //
+     */
+
+    public By theHotspotContainer() {
+        return By.id("hot-spot");
+    }
 }
