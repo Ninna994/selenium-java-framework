@@ -1,5 +1,9 @@
 package custom_framework.templates;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Owner;
+import org.testng.annotations.Test;
+
 public class TemplateTest {
     /*
      * Test methods should appear in the exact same order as the workflows of the respective Flow class.
@@ -25,4 +29,10 @@ public class TemplateTest {
     - **@groups** are used to group test cases
     - **@description** is usually Jira ticket link
      */
+    @Test
+    @Description("")
+    @Owner("Ninna994")
+    public void test() {
+
+    }
 }
