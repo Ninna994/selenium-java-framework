@@ -27,4 +27,26 @@ public class TheInternetNav extends SharedMethods {
     public void navChallengingDOM() {
         clickAndWaitPageToLoad(new TheInternetUi().theChallengingDOMLink());
     }
+
+    public void navCheckboxes() {
+        clickAndWaitPageToLoad(new TheInternetUi().theCheckboxesLink());
+    }
+
+    public void navContextMenu() {
+        clickAndWaitPageToLoad(new TheInternetUi().theContextMenuLink());
+    }
+
+    public void navDigestAuth() {
+        clickAndWaitPageToLoad(new TheInternetUi().theDigestAuthLink());
+    }
+
+    /*public void navCheckboxes() {
+        clickAndWaitPageToLoad(new TheInternetUi().theCheckboxesLink());
+
+    }
+
+    public void navCheckboxes() {
+        clickAndWaitPageToLoad(new TheInternetUi().theCheckboxesLink());
+
+    }*/
 }

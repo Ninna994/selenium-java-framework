@@ -1,12 +1,12 @@
 package custom_framework.apps.theinternet.test_cases;
 
-import custom_framework.apps.theinternet.page_flows.TheInternetFlows;
+import custom_framework.apps.theinternet.page_flows.TheInternetFlow;
 import io.qameta.allure.Description;
 import io.qameta.allure.Owner;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class AddRemoveElementsTest extends TheInternetFlows {
+public class AddRemoveElementsTest extends TheInternetFlow {
     private static final String DELETE = "Delete";
 
     @Test

@@ -1,6 +1,6 @@
 package custom_framework.apps.theinternet.test_cases;
 
-import custom_framework.apps.theinternet.page_flows.TheInternetFlows;
+import custom_framework.apps.theinternet.page_flows.TheInternetFlow;
 import custom_framework.utils.FrameworkSetup;
 import io.qameta.allure.Description;
 import io.qameta.allure.Owner;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class BasicAuthTest extends TheInternetFlows {
+public class BasicAuthTest extends TheInternetFlow {
 
     public static final String USERNAME_PASS = "admin";
 

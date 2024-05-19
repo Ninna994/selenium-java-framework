@@ -1,13 +1,13 @@
 package custom_framework.apps.theinternet.test_cases;
 
-import custom_framework.apps.theinternet.page_flows.TheInternetFlows;
+import custom_framework.apps.theinternet.page_flows.TheInternetFlow;
 import io.qameta.allure.Description;
 import io.qameta.allure.Owner;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class ChallengingDOMTest extends TheInternetFlows {
+public class ChallengingDOMTest extends TheInternetFlow {
     @Test
     @Description("Print text of element located in #row #column")
     @Owner("Nikolina Djekic")
@@ -46,7 +46,7 @@ public class ChallengingDOMTest extends TheInternetFlows {
     @Test
     @Description("Click on button and wait for page to load, then take screenshot of canvas element")
     @Owner("Nikolina Djekic")
-    public void test() {
+    public void testPageReloadAndCanvasScreenshot() {
         navChallengingDOM();
         String startingId = getAttribute(theFirstButton(), "id");
         click(theFirstButton());

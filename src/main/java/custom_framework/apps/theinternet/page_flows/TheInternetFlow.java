@@ -3,7 +3,7 @@ package custom_framework.apps.theinternet.page_flows;
 import custom_framework.apps.theinternet.page_elements.TheInternetUi;
 import org.testng.Assert;
 
-public class TheInternetFlows extends TheInternetUi {
+public class TheInternetFlow extends TheInternetUi {
     /*
      * -------------------- Add remove elements -------------------- //
      */

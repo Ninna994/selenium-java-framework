@@ -38,6 +38,19 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.href("/challenging_dom");
     }
 
+    public By theCheckboxesLink() {
+        return By.href("/checkboxes");
+    }
+
+    public By theContextMenuLink() {
+        return By.href("/context_menu");
+    }
+
+    public By theDigestAuthLink() {
+        return By.href("/digest_auth");
+    }
+
+
     /*
      * -------------------- THE CHALLENGING DOM -------------------- //
      */
@@ -52,5 +65,13 @@ public class TheInternetUi extends TheInternetCommonFlows {
 
     public By theCanvas() {
         return By.id("canvas");
+    }
+
+    /*
+     * -------------------- CHECKBOXES -------------------- //
+     */
+
+    public By theCheckbox() {
+        return By.type("checkbox");
     }
 }

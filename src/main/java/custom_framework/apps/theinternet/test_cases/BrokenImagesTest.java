@@ -1,6 +1,6 @@
 package custom_framework.apps.theinternet.test_cases;
 
-import custom_framework.apps.theinternet.page_flows.TheInternetFlows;
+import custom_framework.apps.theinternet.page_flows.TheInternetFlow;
 import io.qameta.allure.Description;
 import io.qameta.allure.Owner;
 import org.openqa.selenium.WebElement;
@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.util.List;
 
-public class BrokenImagesTest extends TheInternetFlows {
+public class BrokenImagesTest extends TheInternetFlow {
     @Test
     @Description("This is failing test - It asserts there are NO broken images on page")
     @Owner("Ninna994")
