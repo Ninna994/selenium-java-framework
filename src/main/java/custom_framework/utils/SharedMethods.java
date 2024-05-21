@@ -285,9 +285,8 @@ public class SharedMethods extends FrameworkSetup {
     /**
      * Screenshot method for adding screenshots to reports
      *
-     * @param testCaseName
-     * @return
-     * @throws IOException
+     * @param testCaseName - name of TC
+     * @return - destination File printed
      */
     public String getScreenshotPath(String testCaseName) throws IOException {
         TakesScreenshot ts = (TakesScreenshot) driver();
@@ -414,7 +413,6 @@ public class SharedMethods extends FrameworkSetup {
      *
      * @param selectElement - select element from DOM
      * @param optionValue   - option value we want to find
-     * @return
      */
     public boolean isDropdownValuePresent(By selectElement, String optionValue) {
         waitForElementVisible(selectElement);
@@ -509,8 +507,7 @@ public class SharedMethods extends FrameworkSetup {
     /**
      * getElement function that accepts zero or more By arguments and returns true if element is present
      *
-     * @param by
-     * @return
+     * @param by - what to search for
      */
     public WebElement getElement(By... by) {
         WebElement element;
@@ -557,9 +554,9 @@ public class SharedMethods extends FrameworkSetup {
         return new Select(getElement(dropdown)).getFirstSelectedOption().getText();
     }
 
-   public SearchContext getShadowRoot(By by) {
-       return driver().findElement(by).getShadowRoot();
-   }
+    public SearchContext getShadowRoot(By by) {
+        return driver().findElement(by).getShadowRoot();
+    }
 
     public String getTimestamp() {
         long dateLong;
@@ -895,14 +892,12 @@ public class SharedMethods extends FrameworkSetup {
         devTools.createSession();
 
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-        devTools.addListener(Network.responseReceived(), responseReceived -> {
-            System.out.println("Response Url => " + responseReceived.getResponse().getUrl());
-            System.out.println("Response Status => " + responseReceived.getResponse().getStatus());
-            System.out.println("Response Headers => " + responseReceived.getResponse().getHeaders().toString());
-            System.out.println("Response MIME Type => " + responseReceived.getResponse().getMimeType());
-
-            System.out.println("------------------------------------------------------");
-        });
+        devTools.addListener(Network.responseReceived(), responseReceived -> printResponseDetails(
+                responseReceived.getResponse().getUrl(),
+                responseReceived.getResponse().getStatus(),
+                responseReceived.getResponse().getHeaders().toString(),
+                responseReceived.getResponse().getMimeType()
+        ));
 
         // navigate to url
         //inputUrl("https://google.com");
@@ -915,15 +910,40 @@ public class SharedMethods extends FrameworkSetup {
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         devTools.addListener(Network.responseReceived(), responseReceived -> {
             if (responseReceived.getResponse().getUrl().contains(responsePartUrl)) {
-                System.out.println("------------------------------------------------------");
-                System.out.println("Response Url => " + responseReceived.getResponse().getUrl());
-                System.out.println("Response Status => " + responseReceived.getResponse().getStatus());
-                System.out.println("Response Headers => " + responseReceived.getResponse().getHeaders().toString());
-                System.out.println("Response MIME Type => " + responseReceived.getResponse().getMimeType());
-                System.out.println("------------------------------------------------------");
+                printResponseDetails(
+                        responseReceived.getResponse().getUrl(),
+                        responseReceived.getResponse().getStatus(),
+                        responseReceived.getResponse().getHeaders().toString(),
+                        responseReceived.getResponse().getMimeType()
+                );
             }
-
         });
+    }
+
+    public void captureResponse(int responseCode) {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+        devTools.addListener(Network.responseReceived(), responseReceived -> {
+            if (responseReceived.getResponse().getStatus().equals(responseCode)) {
+                printResponseDetails(
+                        responseReceived.getResponse().getUrl(),
+                        responseReceived.getResponse().getStatus(),
+                        responseReceived.getResponse().getHeaders().toString(),
+                        responseReceived.getResponse().getMimeType()
+                );
+            }
+        });
+    }
+
+    private void printResponseDetails(String url, int status, String headers, String mimeType) {
+        System.out.println("------------------------------------------------------");
+        System.out.println("Response Url => " + url);
+        System.out.println("Response Status => " + status);
+        System.out.println("Response Headers => " + headers);
+        System.out.println("Response MIME Type => " + mimeType);
+        System.out.println("------------------------------------------------------");
     }
 
     public void blockUrls() {
@@ -940,9 +960,7 @@ public class SharedMethods extends FrameworkSetup {
 
              */
 
-        devTools.addListener(Network.loadingFailed(), loadingFailed -> {
-            System.out.println("Blocking reason: " + loadingFailed.getBlockedReason().get());
-        });
+        devTools.addListener(Network.loadingFailed(), loadingFailed -> System.out.println("Blocking reason: " + loadingFailed.getBlockedReason().get()));
 
         inputUrl("https://rahulshettyacademy.com/#/index");
         sleepTime(5000);

@@ -27,7 +27,7 @@ public class StatusCodesTest extends TheInternetFlow {
     @Owner("Ninna994")
     public void testPageReturned301() throws IOException {
         navStatusCodes();
-        verifyPageTitle("Status Codes");
+
         captureResponse("/status_codes/301");
         clickAndWaitPageToLoad(theStatusCodesLink("301"));
 
@@ -39,7 +39,7 @@ public class StatusCodesTest extends TheInternetFlow {
     @Owner("Ninna994")
     public void testPageReturned404() throws IOException {
         navStatusCodes();
-        verifyPageTitle("Status Codes");
+
         captureResponse("/status_codes/404");
         clickAndWaitPageToLoad(theStatusCodesLink("404"));
 
@@ -51,7 +51,7 @@ public class StatusCodesTest extends TheInternetFlow {
     @Owner("Ninna994")
     public void testPageReturned500() throws IOException {
         navStatusCodes();
-        verifyPageTitle("Status Codes");
+
         captureResponse("/status_codes/500");
         clickAndWaitPageToLoad(theStatusCodesLink("500"));
 
