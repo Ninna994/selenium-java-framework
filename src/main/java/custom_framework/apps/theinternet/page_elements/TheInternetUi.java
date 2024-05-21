@@ -91,7 +91,7 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     public By theDynamicLoadingLink() {
-        return By.href("/loading");
+        return By.href("/dynamic_loading");
     }
 
     public By theEntryAdLink() {
@@ -198,8 +198,20 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
-     * --------------------  -------------------- //
+     * -------------------- DYNAMIC LOADING -------------------- //
      */
+
+    public By theExampleLink(String elementNumber) {
+        return By.cssSelector("a[href='/dynamic_loading/" + elementNumber + "']");
+    }
+
+    public By theLoadingBar() {
+        return By.id("loading");
+    }
+
+    public By theFinishMessage() {
+        return By.cssSelector("#finish h4");
+    }
 
     /*
      * --------------------  -------------------- //
