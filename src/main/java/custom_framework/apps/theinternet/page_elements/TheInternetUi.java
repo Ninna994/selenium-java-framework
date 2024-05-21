@@ -238,9 +238,11 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
-     * --------------------  -------------------- //
+     * -------------------- EXIT INTENT  -------------------- //
      */
-
+    public By theRowTopElement() {
+        return By.className("row");
+    }
     /*
      * --------------------  -------------------- //
      */

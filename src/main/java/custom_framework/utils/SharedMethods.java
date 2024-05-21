@@ -611,6 +611,12 @@ public class SharedMethods extends FrameworkSetup {
         driver().manage().window().maximize();
     }
 
+    public void navigateOutsideViewport() {
+        String script = "var event = new Event('mouseleave', { bubbles: true, cancelable: true }); " +
+                "document.querySelector('body').dispatchEvent(event);";
+        ((JavascriptExecutor) driver()).executeScript(script);
+    }
+
     public void refreshPage() {
         driver().navigate().refresh();
     }
