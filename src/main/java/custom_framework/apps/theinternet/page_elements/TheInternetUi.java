@@ -181,5 +181,15 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.id("dropdown");
     }
 
+    /*
+     * -------------------- DYNAMIC CONTENT -------------------- //
+     */
+    public By theImageContainer() {
+        return By.cssSelector(".large-2 img");
+    }
+    
+    public By theTextContainer() {
+        return By.className("large-10");
+    }
 
 }
