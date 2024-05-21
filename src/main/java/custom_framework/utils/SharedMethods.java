@@ -535,6 +535,11 @@ public class SharedMethods extends FrameworkSetup {
         return driver().findElements(by).get(driver().findElements(by).size() - 1);
     }
 
+    public List<WebElement> getOptions(By dropdown) {
+        waitForElementPresent(dropdown);
+        return new Select(getElement(dropdown)).getOptions();
+    }
+
     public String getRandomNumber(int min, int max) {
         return RandomStringUtils.randomNumeric(min, max);
     }
@@ -552,15 +557,14 @@ public class SharedMethods extends FrameworkSetup {
         return new Select(getElement(dropdown)).getFirstSelectedOption().getText();
     }
 
+   public SearchContext getShadowRoot(By by) {
+       return driver().findElement(by).getShadowRoot();
+   }
+
     public String getTimestamp() {
         long dateLong;
         dateLong = System.currentTimeMillis();
         return String.valueOf(dateLong);
-    }
-
-    public List<WebElement> getOptions(By dropdown) {
-        waitForElementPresent(dropdown);
-        return new Select(getElement(dropdown)).getOptions();
     }
 
     public String getUniqueValue() {

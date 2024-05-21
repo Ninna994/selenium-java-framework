@@ -290,11 +290,19 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
-     * -------------------- KOMENTAR -------------------- //
+     * -------------------- JS ALERTS -------------------- //
      */
 
     public By theResultContainer() {
         return By.id("result");
+    }
+
+    /*
+     * -------------------- KOMENTAR -------------------- //
+     */
+
+    public By theShadowHost(String orderNumber) {
+        return By.cssSelector("my-paragraph:nth-of-type(" + orderNumber + ")");
     }
 
 }
