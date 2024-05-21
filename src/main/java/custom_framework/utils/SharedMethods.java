@@ -318,6 +318,10 @@ public class SharedMethods extends FrameworkSetup {
         new Actions(driver()).moveToElement(driver().findElement(by)).perform();
     }
 
+    public void hoverOver(WebElement element) {
+        new Actions(driver()).moveToElement(element).perform();
+    }
+
     public void input(By by, String text) {
         waitForElementClickable(by);
         driver().findElement(by).clear();

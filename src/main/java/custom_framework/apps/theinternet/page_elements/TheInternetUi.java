@@ -39,6 +39,10 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.cssSelector("input[type='text']");
     }
 
+    public By theContentImages() {
+        return By.cssSelector("#content img");
+    }
+
     /*
      * -------------------- NAVIGATION LINKS -------------------- //
      */
@@ -274,8 +278,15 @@ public class TheInternetUi extends TheInternetCommonFlows {
 
 
     /*
-     * --------------------  -------------------- //
+     * -------------------- HOVERS -------------------- //
      */
 
+    public By theNameContainer(String number) {
+        return By.cssSelector(".figure:nth-of-type(" + number + ") .figcaption h5");
+    }
+
+    public By theUsersLinkContainer(String number) {
+        return By.cssSelector(".figure:nth-of-type(" + number + ") .figcaption a");
+    }
 
 }
