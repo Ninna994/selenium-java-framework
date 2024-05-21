@@ -298,11 +298,19 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
-     * -------------------- KOMENTAR -------------------- //
+     * -------------------- SHADOW DOM -------------------- //
      */
 
     public By theShadowHost(String orderNumber) {
         return By.cssSelector("my-paragraph:nth-of-type(" + orderNumber + ")");
+    }
+
+    /*
+     * -------------------- STATUS CODES -------------------- //
+     */
+
+    public By theStatusCodesLink(String statusCode) {
+        return By.xpath("//a[normalize-space()='" + statusCode + "']");
     }
 
 }

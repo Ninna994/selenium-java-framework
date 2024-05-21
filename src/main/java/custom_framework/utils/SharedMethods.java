@@ -905,7 +905,25 @@ public class SharedMethods extends FrameworkSetup {
         });
 
         // navigate to url
-        inputUrl("https://google.com");
+        //inputUrl("https://google.com");
+    }
+
+    public void captureResponse(String responsePartUrl) {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+        devTools.addListener(Network.responseReceived(), responseReceived -> {
+            if (responseReceived.getResponse().getUrl().contains(responsePartUrl)) {
+                System.out.println("------------------------------------------------------");
+                System.out.println("Response Url => " + responseReceived.getResponse().getUrl());
+                System.out.println("Response Status => " + responseReceived.getResponse().getStatus());
+                System.out.println("Response Headers => " + responseReceived.getResponse().getHeaders().toString());
+                System.out.println("Response MIME Type => " + responseReceived.getResponse().getMimeType());
+                System.out.println("------------------------------------------------------");
+            }
+
+        });
     }
 
     public void blockUrls() {
