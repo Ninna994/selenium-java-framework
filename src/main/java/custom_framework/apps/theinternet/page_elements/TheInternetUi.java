@@ -242,6 +242,43 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
+     * -------------------- FORM AUTHENTICATION -------------------- //
+     */
+
+    public By theUsernameField() {
+        return By.id("username");
+    }
+
+    public By thePasswordField() {
+        return By.id("password");
+    }
+
+    public By theSubmitButton() {
+        return By.cssSelector("button[type='submit']");
+    }
+
+    public By theAlertContainer() {
+        return By.id("flash-messages");
+    }
+
+    public By theAlertMessageContainer() {
+        return By.id("flash");
+    }
+
+    public By theSuccessAlert() {
+        return By.cssSelector(".flash.success");
+    }
+
+    public By theSubHeader() {
+        return By.className("subheader");
+    }
+
+    public By theLogoutButton() {
+        return By.cssSelector(".button.secondary.radius");
+    }
+
+
+    /*
      * -------------------- FRAMES -------------------- //
      */
     public By theNestedFramesLink() {
