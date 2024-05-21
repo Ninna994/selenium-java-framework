@@ -18,6 +18,5 @@ public class GeolocationTest extends TheInternetFlow {
         verifyPageTitle("Geolocation");
         click(theButtonWithText("Where am I?"));
         Assert.assertEquals(verifyText(theLatitudeValue()), String.valueOf(brazil.getLatitude()));
-
     }
 }

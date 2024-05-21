@@ -127,9 +127,10 @@ public class FrameworkSetup {
         devTools.send(Log.enable());
         devTools.addListener(Log.entryAdded(), entryAdded -> {
             String logText = entryAdded.getText();
+            String logUrl = String.valueOf(entryAdded.getUrl());
             String logLevel = entryAdded.getLevel().toString();
-            if (logLevel.equals("warning") || logLevel.equals("error")) {
-                String consoleLogMessage = ("CONSOLE LOGGED " + logLevel + " ==> \n" + logText + "\n");
+            if (logLevel.equals("warning") || logLevel.equals("error") && !logText.contains("net::ERR_NAME_NOT_RESOLVED")) {
+                String consoleLogMessage = ("CONSOLE LOGGED "  + logLevel.toUpperCase() + ". \n Log message ==> " + logText + "\n" + "Error url ==> " + logUrl);
                 log.error(consoleLogMessage);
             }
         });
