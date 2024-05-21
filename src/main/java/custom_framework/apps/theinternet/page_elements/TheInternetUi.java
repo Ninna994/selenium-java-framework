@@ -214,8 +214,28 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
-     * --------------------  -------------------- //
+     * -------------------- ENTRY AD -------------------- //
      */
+
+    public By theModal() {
+        return By.className("modal");
+    }
+
+    public By theModalTitle() {
+        return By.cssSelector(".modal-title h3");
+    }
+
+    public By theModalBody() {
+        return By.cssSelector(".modal-body p");
+    }
+
+    public By theModalCloseButton() {
+        return By.cssSelector(".modal-footer p");
+    }
+
+    public By theRestartAdButton() {
+        return By.id("restart-ad");
+    }
 
     /*
      * --------------------  -------------------- //

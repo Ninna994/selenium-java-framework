@@ -17,6 +17,7 @@ import org.openqa.selenium.devtools.v124.network.model.Headers;
 import org.openqa.selenium.devtools.v124.performance.Performance;
 import org.openqa.selenium.devtools.v124.performance.model.Metric;
 import org.openqa.selenium.devtools.v124.security.Security;
+import org.openqa.selenium.devtools.v124.storage.Storage;
 import org.openqa.selenium.devtools.v85.fetch.Fetch;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -833,6 +834,21 @@ public class SharedMethods extends FrameworkSetup {
 
         driver().get("https://manytools.org/http-html-text/http-request-headers/");
         driver().quit();
+    }
+
+    public void clearCache() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+        devTools.send(Network.clearBrowserCache());
+    }
+
+    public void clearStorage(String originUrl) {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+        String storageTypes = "cookies,local_storage,session_storage,indexeddb,cache_storage";
+        devTools.send(Storage.clearDataForOrigin(
+                originUrl,
+                storageTypes));
     }
 
     public void captureRequest() {
