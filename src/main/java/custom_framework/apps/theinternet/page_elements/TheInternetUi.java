@@ -289,4 +289,12 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.cssSelector(".figure:nth-of-type(" + number + ") .figcaption a");
     }
 
+    /*
+     * -------------------- KOMENTAR -------------------- //
+     */
+
+    public By theResultContainer() {
+        return By.id("result");
+    }
+
 }

@@ -224,6 +224,10 @@ public class SharedMethods extends FrameworkSetup {
         }
     }
 
+    public void focusAlert() {
+        driver().switchTo().alert();
+    }
+
     public void focusDefaultContent() {
         driver().switchTo().defaultContent();
     }
