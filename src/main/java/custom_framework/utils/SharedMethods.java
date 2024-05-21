@@ -80,7 +80,7 @@ public class SharedMethods extends FrameworkSetup {
         click(By.value("Search for public inbox for free"));
         sleepTime(2000);
         click(By.cssSelector("tr.ng-scope:first-child"));
-        focusIframe("html_msg_body");
+        focusFrame("html_msg_body");
         scrollToBottom();
         click(1000, By.tagName("button"), 1000);
         focusNewTab();
@@ -232,14 +232,18 @@ public class SharedMethods extends FrameworkSetup {
         new Actions(driver()).moveToElement(driver().findElement(by)).perform();
     }
 
-    public void focusIframe(By by) {
+    public void focusFrame(By by) {
         waitForPageToLoad();
         WebElement element = driver().findElement(by);
         driver().switchTo().frame(element);
     }
 
-    public void focusIframe(String frame) {
+    public void focusFrame(String frame) {
         driver().switchTo().frame(frame);
+    }
+
+    public void focusFrameParent() {
+        driver().switchTo().parentFrame();
     }
 
     public void focusNewTab() {

@@ -238,18 +238,40 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
-     * -------------------- EXIT INTENT  -------------------- //
+     * -------------------- FRAMES -------------------- //
      */
-    public By theRowTopElement() {
-        return By.className("row");
+    public By theNestedFramesLink() {
+        return By.cssSelector("a[href='/nested_frames']");
     }
-    /*
-     * --------------------  -------------------- //
-     */
+
+    public By theIFrameLink() {
+        return By.cssSelector("a[href='/iframe']");
+    }
+
+    public By theBodyTextContainer() {
+        return By.cssSelector("body");
+    }
+
+    public By theTinyMCEFrame() {
+        return By.className("tox-edit-area__iframe");
+    }
+
+    public By theTinyMCEPlaceholder() {
+        return By.cssSelector("#tinymce p");
+    }
 
     /*
-     * --------------------  -------------------- //
+     * -------------------- GEOLOCATION -------------------- //
      */
+
+    public By theLatitudeValue() {
+        return By.id("lat-value");
+    }
+
+    public By theLongitudeValue() {
+        return By.id("long-value");
+    }
+
 
     /*
      * --------------------  -------------------- //
