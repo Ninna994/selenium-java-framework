@@ -41,6 +41,8 @@ public class DynamicContentTest extends TheInternetFlow {
     }
 
     @Test
+    @Description("Verify that content changes even after multiple refreshes")
+    @Owner("Ninna994")
     public void testVerifyDynamicChangesAfterMultiplePageRefresh() {
         navDynamicContent();
 

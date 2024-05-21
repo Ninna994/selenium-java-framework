@@ -11,12 +11,32 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.tagName("h3");
     }
 
+    public By thePageTitleH4() {
+        return By.tagName("h4");
+    }
+
     public By theImageElement() {
         return By.tagName("img");
     }
 
     public By theButtonWithText(String text) {
         return By.xpath("//button[contains(text(), '" + text + "')]");
+    }
+
+    public By theCheckbox() {
+        return By.type("checkbox");
+    }
+
+    public By theDropdown() {
+        return By.id("dropdown");
+    }
+
+    public By theMessage() {
+        return By.id("message");
+    }
+
+    public By theTextInput() {
+        return By.cssSelector("input[type='text']");
     }
 
     /*
@@ -135,14 +155,6 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
-     * -------------------- CHECKBOXES -------------------- //
-     */
-
-    public By theCheckbox() {
-        return By.type("checkbox");
-    }
-
-    /*
      * -------------------- CONTEXT MENU -------------------- //
      */
 
@@ -175,21 +187,39 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     /*
-     * -------------------- DROPDOWN -------------------- //
-     */
-    public By theDropdown() {
-        return By.id("dropdown");
-    }
-
-    /*
      * -------------------- DYNAMIC CONTENT -------------------- //
      */
     public By theImageContainer() {
         return By.cssSelector(".large-2 img");
     }
-    
+
     public By theTextContainer() {
         return By.className("large-10");
     }
+
+    /*
+     * --------------------  -------------------- //
+     */
+
+    /*
+     * --------------------  -------------------- //
+     */
+
+    /*
+     * --------------------  -------------------- //
+     */
+
+    /*
+     * --------------------  -------------------- //
+     */
+
+    /*
+     * --------------------  -------------------- //
+     */
+
+    /*
+     * --------------------  -------------------- //
+     */
+
 
 }
