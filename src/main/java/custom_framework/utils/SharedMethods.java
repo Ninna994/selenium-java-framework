@@ -572,12 +572,12 @@ public class SharedMethods extends FrameworkSetup {
      * -------------------- USER ACTIONS -------------------- //
      */
 
-    public void alertDismiss() {
-        driver().switchTo().alert().dismiss();
-    }
-
     public void alertAccept() {
         driver().switchTo().alert().accept();
+    }
+
+    public void alertDismiss() {
+        driver().switchTo().alert().dismiss();
     }
 
     public void closeActiveBrowserTab() {
@@ -841,33 +841,32 @@ public class SharedMethods extends FrameworkSetup {
      * -------------------- NETWORK METHODS -------------------- //
      */
 
-    public void network() {
+    public void blockUrls() {
         DevTools devTools = ((ChromeDriver) driver()).getDevTools();
         devTools.createSession();
-
-        driver().get("https://manytools.org/http-html-text/http-request-headers/");
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
 
-        Headers headers = new Headers(Collections.singletonMap("testing", "selenium"));
-        devTools.send(Network.setExtraHTTPHeaders(headers));
+        devTools.send(Network.setBlockedURLs(List.of("*.css"))); // Blocks all css files
+            /*
+             * Block request by URL below code
+             devTool.send(Network.setBlockedURLs( List.of(
+             "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+              )));
 
-        driver().get("https://manytools.org/http-html-text/http-request-headers/");
-        driver().quit();
+             */
+
+        devTools.addListener(Network.loadingFailed(), loadingFailed -> System.out.println("Blocking reason: " + loadingFailed.getBlockedReason().get()));
+
+        inputUrl("https://rahulshettyacademy.com/#/index");
+        sleepTime(5000);
     }
 
-    public void clearCache() {
+    public void bypassInsecureWebsite() {
         DevTools devTools = ((ChromeDriver) driver()).getDevTools();
         devTools.createSession();
-        devTools.send(Network.clearBrowserCache());
-    }
+        devTools.send(Security.setIgnoreCertificateErrors(true));
 
-    public void clearStorage(String originUrl) {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
-        String storageTypes = "cookies,local_storage,session_storage,indexeddb,cache_storage";
-        devTools.send(Storage.clearDataForOrigin(
-                originUrl,
-                storageTypes));
+        inputUrl("https://untrusted-root.badssl.com/");
     }
 
     public void captureRequest() {
@@ -937,41 +936,19 @@ public class SharedMethods extends FrameworkSetup {
         });
     }
 
-    private void printResponseDetails(String url, int status, String headers, String mimeType) {
-        System.out.println("------------------------------------------------------");
-        System.out.println("Response Url => " + url);
-        System.out.println("Response Status => " + status);
-        System.out.println("Response Headers => " + headers);
-        System.out.println("Response MIME Type => " + mimeType);
-        System.out.println("------------------------------------------------------");
-    }
-
-    public void blockUrls() {
+    public void clearCache() {
         DevTools devTools = ((ChromeDriver) driver()).getDevTools();
         devTools.createSession();
-        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-
-        devTools.send(Network.setBlockedURLs(List.of("*.css"))); // Blocks all css files
-            /*
-             * Block request by URL below code
-             devTool.send(Network.setBlockedURLs( List.of(
-             "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-              )));
-
-             */
-
-        devTools.addListener(Network.loadingFailed(), loadingFailed -> System.out.println("Blocking reason: " + loadingFailed.getBlockedReason().get()));
-
-        inputUrl("https://rahulshettyacademy.com/#/index");
-        sleepTime(5000);
+        devTools.send(Network.clearBrowserCache());
     }
 
-    public void bypassInsecureWebsite() {
+    public void clearStorage(String originUrl) {
         DevTools devTools = ((ChromeDriver) driver()).getDevTools();
         devTools.createSession();
-        devTools.send(Security.setIgnoreCertificateErrors(true));
-
-        inputUrl("https://untrusted-root.badssl.com/");
+        String storageTypes = "cookies,local_storage,session_storage,indexeddb,cache_storage";
+        devTools.send(Storage.clearDataForOrigin(
+                originUrl,
+                storageTypes));
     }
 
     public void emulateNetwork() {
@@ -981,6 +958,27 @@ public class SharedMethods extends FrameworkSetup {
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         devTools.send(Network.emulateNetworkConditions(false, 20, 20, 50, Optional.of(ConnectionType.CELLULAR3G), Optional.empty(), Optional.empty(), Optional.empty()));
         inputUrl("https://rahulshettyacademy.com/#/index");
+    }
+
+    public int getUrlResponseCode(String url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setRequestMethod("HEAD");
+        connection.connect();
+        return connection.getResponseCode();
+    }
+
+    public void metrics() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+
+        devTools.send(Performance.enable(Optional.empty()));
+        List<Metric> metricList = devTools.send(Performance.getMetrics());
+        driver().get("https://opensource.saucelabs.com/");
+
+        for (Metric m : metricList) {
+            System.out.println(m.getName() + " = " + m.getValue());
+        }
+
     }
 
     public void mockAPIRequest() {
@@ -1006,25 +1004,27 @@ public class SharedMethods extends FrameworkSetup {
 
     }
 
-    public void metrics() {
+    public void network() {
         DevTools devTools = ((ChromeDriver) driver()).getDevTools();
         devTools.createSession();
 
-        devTools.send(Performance.enable(Optional.empty()));
-        List<Metric> metricList = devTools.send(Performance.getMetrics());
-        driver().get("https://opensource.saucelabs.com/");
+        driver().get("https://manytools.org/http-html-text/http-request-headers/");
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
 
-        for (Metric m : metricList) {
-            System.out.println(m.getName() + " = " + m.getValue());
-        }
+        Headers headers = new Headers(Collections.singletonMap("testing", "selenium"));
+        devTools.send(Network.setExtraHTTPHeaders(headers));
 
+        driver().get("https://manytools.org/http-html-text/http-request-headers/");
+        driver().quit();
     }
 
-    public int getUrlResponseCode(String url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setRequestMethod("HEAD");
-        connection.connect();
-        return connection.getResponseCode();
+    private void printResponseDetails(String url, int status, String headers, String mimeType) {
+        System.out.println("------------------------------------------------------");
+        System.out.println("Response Url => " + url);
+        System.out.println("Response Status => " + status);
+        System.out.println("Response Headers => " + headers);
+        System.out.println("Response MIME Type => " + mimeType);
+        System.out.println("------------------------------------------------------");
     }
 
 }
