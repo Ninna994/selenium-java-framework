@@ -107,11 +107,11 @@ public class TheInternetUi extends TheInternetCommonFlows {
     }
 
     public By theFileDownloadLink() {
-        return By.href("/file_download");
+        return By.href("/download");
     }
 
     public By theFileUploadLink() {
-        return By.href("/file_upload");
+        return By.href("/upload");
     }
 
     public By theFormAuthenticationLink() {
@@ -348,6 +348,26 @@ public class TheInternetUi extends TheInternetCommonFlows {
 
     public By theStatusCodesLink(String statusCode) {
         return By.xpath("//a[normalize-space()='" + statusCode + "']");
+    }
+
+    /*
+     * -------------------- FILE UPLOAD / DOWNLOAD -------------------- //
+     */
+
+    public By theBrowseField() {
+        return By.id("file-upload");
+    }
+
+    public By theDragDropContainer() {
+        return By.id("drag-drop-upload");
+    }
+
+    public By theFileUploadButton() {
+        return By.id("file-submit");
+    }
+
+    public By theUploadedFiledContainer() {
+        return By.id("uploaded-files");
     }
 
 }

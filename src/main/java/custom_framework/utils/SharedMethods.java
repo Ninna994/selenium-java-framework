@@ -777,7 +777,13 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void uploadFile(String name) {
-        driver().findElement(By.xpath(" //input[@type='file']")).sendKeys(fileDirectory + "\\" + name);
+        driver().findElement(By.xpath("//input[@type='file']")).sendKeys(fileDirectory + "\\" + name);
+    }
+
+    public void uploadFileJS(String name) {
+        JavascriptExecutor js = (JavascriptExecutor) driver();
+        WebElement fileInput = driver().findElement(By.xpath("//input[@type='file']"));
+        js.executeScript("arguments[0].value='" + fileDirectory + "\\" + name + "';", fileInput);
     }
 
     public void uploadTwoFiles(String fileName1, String fileName2) {

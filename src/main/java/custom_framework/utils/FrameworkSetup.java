@@ -36,7 +36,7 @@ public class FrameworkSetup {
     public final long timeout = Long.parseLong(settings.getProperty("timeout"));
 
     public final String fileSeparator = System.getProperty("file.separator");
-    public final String fileDirectory = System.getProperty("user.dir") + fileSeparator + "src" + fileSeparator + "main" + fileSeparator + "resources" + fileSeparator + "testData" + fileSeparator;
+    public final String fileDirectory = System.getProperty("user.dir") + fileSeparator + "src" + fileSeparator + "main" + fileSeparator + "resources" + fileSeparator + "test_data" + fileSeparator;
     public final String screenshotDestinationReporting = System.getProperty("user.dir") + fileSeparator + "reports" + fileSeparator;
 
     public FrameworkSetup() {
