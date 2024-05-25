@@ -8,7 +8,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v124.log.Log;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterMethod;
@@ -37,6 +39,7 @@ public class FrameworkSetup {
 
     public final String fileSeparator = System.getProperty("file.separator");
     public final String fileDirectory = System.getProperty("user.dir") + fileSeparator + "src" + fileSeparator + "main" + fileSeparator + "resources" + fileSeparator + "test_data" + fileSeparator;
+    public final String downloadDirectory = fileDirectory + fileSeparator + "downloads";
     public final String screenshotDestinationReporting = System.getProperty("user.dir") + fileSeparator + "reports" + fileSeparator;
 
     public FrameworkSetup() {
@@ -63,20 +66,28 @@ public class FrameworkSetup {
 
     private void startLocalDriver() {
         WebDriver driver;
-        ChromeOptions chromeOptions;
         if (browser.equalsIgnoreCase("Chrome")) {
-            chromeOptions = getChromeOptions();
+            ChromeOptions chromeOptions = getChromeOptions(downloadDirectory);
             driver = new ChromeDriver(chromeOptions);
-            configureDevTools(driver);
-            driver.manage().window().maximize();
+            configureDevTools(driver);  // Add this method if needed, or remove if not applicable
         } else if (browser.equalsIgnoreCase("HeadlessChrome")) {
-            chromeOptions = getHeadlessChromeOptions();
+            ChromeOptions chromeOptions = getHeadlessChromeOptions();
             driver = new ChromeDriver(chromeOptions);
+            configureDevTools(driver);  // Add this method if needed, or remove if not applicable
+        } else if (browser.equalsIgnoreCase("Firefox")) {
+            FirefoxOptions firefoxOptions = getFirefoxOptions();
+            driver = new FirefoxDriver(firefoxOptions);
+        } else if (browser.equalsIgnoreCase("Edge")) {
+            EdgeOptions edgeOptions = new EdgeOptions();
+            driver = new EdgeDriver(edgeOptions);
         } else {
             throw new IllegalArgumentException("Unsupported browser: " + browser);
         }
+        // Common configurations
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(timeout));
-        DriverThreadLocal.setDriver(driver);
+        driver.manage().window().maximize();
+
+        DriverThreadLocal.setDriver(driver);  // Ensure this is your own implementation to manage WebDriver instances
     }
 
     private void initializeRemoteDriver() throws MalformedURLException {
@@ -84,8 +95,8 @@ public class FrameworkSetup {
         Capabilities options;
         if (browser.equalsIgnoreCase("chrome")) {
             options = getChromeOptions();
-        } else if (browser.equalsIgnoreCase("firefox")) {
-            options = new FirefoxOptions();
+        } else if (browser.equalsIgnoreCase("Firefox")) {
+            options = getFirefoxOptions();
         } else if (browser.equalsIgnoreCase("edge")) {
             options = new EdgeOptions();
         } else if (browser.equalsIgnoreCase("HeadlessChrome")) {
@@ -105,14 +116,53 @@ public class FrameworkSetup {
         Map<String, Object> chromePrefs = new HashMap<>();
 
         chromePrefs.put("profile.default_content_settings.popups", 0);
-        chromePrefs.put("download.default_directory", fileDirectory);
+        chromePrefs.put("download.default_directory", downloadDirectory);
         chromePrefs.put("selectfile.last_directory", fileDirectory);
         chromePrefs.put("download.prompt_for_download", false);
         chromePrefs.put("directory_upgrade", true);
 
         chromeOptions.setExperimentalOption("prefs", chromePrefs);
-        chromeOptions.addArguments("--incognito", "--remote-allow-origins=*", "ignore-certificate-errors");
+        chromeOptions.addArguments("--incognito", "--remote-allow-origins=*", "ignore-certificate-errors", "disable-features=DownloadBubble,DownloadBubbleV2");
         return chromeOptions;
+    }
+
+    private static ChromeOptions getChromeOptions(String downloadDirectory) {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        Map<String, Object> chromePrefs = new HashMap<>();
+
+        // Set Chrome preferences for file download
+        chromePrefs.put("profile.default_content_settings.popups", 0);
+        chromePrefs.put("download.default_directory", downloadDirectory);
+        chromePrefs.put("download.prompt_for_download", false);
+        chromePrefs.put("download.directory_upgrade", true);
+        chromePrefs.put("safebrowsing.enabled", "false");
+
+        // Set MIME types that should not prompt for download
+        chromePrefs.put("profile.default_content_setting_values.automatic_downloads", 1);
+        chromePrefs.put("download.extensions_to_open", "");
+        chromePrefs.put("profile.content_settings.exceptions.automatic_downloads.*.setting", 1);
+
+        // Add preferences to Chrome options
+        chromeOptions.setExperimentalOption("prefs", chromePrefs);
+        chromeOptions.addArguments("--incognito");
+        chromeOptions.addArguments("--remote-allow-origins=*");
+        chromeOptions.addArguments("--ignore-certificate-errors");
+        chromeOptions.addArguments("--disable-features=DownloadBubble,DownloadBubbleV2");
+        chromeOptions.addArguments("--safebrowsing-disable-download-protection");
+        chromeOptions.addArguments("--safebrowsing-disable-extension-blacklist");
+
+        return chromeOptions;
+    }
+
+    private FirefoxOptions getFirefoxOptions() {
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+
+        firefoxOptions.addPreference("browser.download.dir", downloadDirectory);
+        firefoxOptions.addPreference("browser.download.folderList", 2);
+        firefoxOptions.addPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf");
+        firefoxOptions.addPreference("pdfjs.disabled", true); // Disable the built-in PDF viewer
+
+        return firefoxOptions;
     }
 
     private ChromeOptions getHeadlessChromeOptions() {

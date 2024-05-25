@@ -22,7 +22,6 @@ public class CheckboxesTest extends TheInternetFlow {
                 checkbox.click();
             }
         }
-
     }
 
     @Test

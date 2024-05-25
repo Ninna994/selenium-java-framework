@@ -21,32 +21,6 @@ public class BasicAuthTest extends TheInternetFlow {
     public static final String USERNAME_PASS = "admin";
 
     @Test
-    @Description("Handling Basic Auth with CDP")
-    @Owner("Ninna994")
-    public void testLoginUserCDPMethod() {
-
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
-        devTools.send(Network.enable(Optional.of(0), Optional.of(0), Optional.of(0)));
-        // Create hashmap for storing key value pair
-        Map<String, Object> header = new HashMap<>();
-
-        // Create authentication string- please replace with your application username and password - in current case guest is username and password as well.
-        String basicAuth = "Basic " + new String(new Base64().encode(String.format("%s:%s", USERNAME_PASS, USERNAME_PASS).getBytes()));
-
-        // add Authorization as key and basicAuth as value
-        header.put("Authorization", basicAuth);
-
-        // add authentication as part of header
-        devTools.send(Network.setExtraHTTPHeaders(new Headers(header)));
-        navBasicAuth();
-        sleepTime(2000);
-
-        goVerifyTitle("Basic Auth");
-        Assert.assertEquals(verifyText(By.tagName("p")), "Congratulations! You must have the proper credentials.", "Wrong text displayed");
-    }
-
-    @Test
     @Description("Handling Basic Auth with Authentication URL")
     @Owner("Ninna994")
     public void testLoginUserAuthenticationUrlMethod() {
@@ -55,6 +29,26 @@ public class BasicAuthTest extends TheInternetFlow {
         inputUrl(authUrl);
 
         sleepTime(2000);
+        goVerifyTitle("Basic Auth");
+        Assert.assertEquals(verifyText(By.tagName("p")), "Congratulations! You must have the proper credentials.", "Wrong text displayed");
+    }
+
+    @Test
+    @Description("Handling Basic Auth with CDP")
+    @Owner("Ninna994")
+    public void testLoginUserCDPMethod() {
+        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
+        devTools.createSession();
+        devTools.send(Network.enable(Optional.of(0), Optional.of(0), Optional.of(0)));
+
+        Map<String, Object> header = new HashMap<>();
+        String basicAuth = "Basic " + new String(new Base64().encode(String.format("%s:%s", USERNAME_PASS, USERNAME_PASS).getBytes()));
+
+        header.put("Authorization", basicAuth);
+        devTools.send(Network.setExtraHTTPHeaders(new Headers(header)));
+        navBasicAuth();
+        sleepTime(2000);
+
         goVerifyTitle("Basic Auth");
         Assert.assertEquals(verifyText(By.tagName("p")), "Congratulations! You must have the proper credentials.", "Wrong text displayed");
     }

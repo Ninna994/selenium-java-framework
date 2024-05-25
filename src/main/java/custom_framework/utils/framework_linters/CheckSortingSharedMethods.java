@@ -1,4 +1,4 @@
-package custom_framework.utils.frameworkLinters;
+package custom_framework.utils.framework_linters;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class AACheckSorting {
+public class CheckSortingSharedMethods {
     public static void main(String[] args) {
         String filePath =System.getProperty("user.dir") +  "\\src\\main\\java\\custom_framework\\utils\\SharedMethods.java";
         try {

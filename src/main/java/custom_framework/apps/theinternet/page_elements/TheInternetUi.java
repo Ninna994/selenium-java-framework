@@ -370,4 +370,8 @@ public class TheInternetUi extends TheInternetCommonFlows {
         return By.id("uploaded-files");
     }
 
+    public By theDownloadLinks() {
+        return By.cssSelector("#content a");
+    }
+
 }

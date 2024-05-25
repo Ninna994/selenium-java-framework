@@ -30,6 +30,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -713,57 +717,44 @@ public class SharedMethods extends FrameworkSetup {
      * -------------------- FILES METHODS -------------------- //
      */
 
-    public void deleteAllFilesFromDirectory() {
-        String directory = fileDirectory;
-
-        File file = new File(directory);
-        String[] currentFiles;
-        if (file.isDirectory()) {
-            currentFiles = file.list();
-            for (int i = 0; i < currentFiles.length; i++) {
-                File myFile = new File(file, currentFiles[i]);
-                if (!myFile.getName().contains("automation")) {
-                    myFile.delete();
+    public void deleteAllFilesFromDownloadDirectory() {
+        Path directory = Paths.get(downloadDirectory);
+        if (Files.isDirectory(directory)) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+                for (Path file : stream) {
+                    try {
+                        Files.delete(file);
+                        System.out.println("Deleted: " + file.getFileName());
+                    } catch (IOException e) {
+                        System.err.println("Failed to delete: " + file.getFileName() + " due to " + e.getMessage());
+                    }
                 }
-
+            } catch (IOException e) {
+                System.err.println("Error accessing directory: " + e.getMessage());
             }
+        } else {
+            System.err.println("Not a directory: " + downloadDirectory);
         }
-    }
-
-    public void downloadDocument(String fileName1) {
-        sleepTime(4000);
-        File folder = new File(fileDirectory);
-        log.info(fileDirectory);
-        File[] listOfFiles = folder.listFiles();
-        boolean found = false;
-        File f = null;
-
-        for (File listOfFile : listOfFiles) {
-            if (listOfFile.isFile()) {
-                String fileName = listOfFile.getName();
-                log.info("File {}", listOfFile.getName());
-                if (fileName.matches(fileName1)) {
-                    f = new File(fileName);
-                    found = true;
-                    Assert.assertTrue(found, "Document not found");
-                }
-            }
-        }
-        Assert.assertTrue(found, "Downloaded document is not found");
     }
 
     public String findLastDownloadedFile() {
-        File dir = new File(fileDirectory);
+        File dir = new File(downloadDirectory);
         File[] files = dir.listFiles();
 
         if (files == null || files.length == 0) return null;
 
-        File lastModifiedFile = files[0];
+        File lastModifiedFile = Arrays.stream(files)
+                .filter(File::isFile) // Ensure we only consider files
+                .max(Comparator.comparingLong(File::lastModified))
+                .orElse(null);
 
-        for (int i = 1; i < files.length; i++) {
-            if (lastModifiedFile.lastModified() < files[i].lastModified()) lastModifiedFile = files[i];
-        }
-        return lastModifiedFile.getName();
+        return lastModifiedFile != null ? lastModifiedFile.getName() : null;
+    }
+
+    public int getFileCount() {
+        File dir = new File(downloadDirectory);
+        File[] files = dir.listFiles();
+        return (files != null) ? files.length : 0;
     }
 
     public String readExcel(int columnNumber) throws IOException {

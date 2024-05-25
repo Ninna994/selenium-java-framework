@@ -8,14 +8,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ContextMenuTest extends TheInternetFlow {
-    @Test
-    @Description("Verify elements on page")
-    @Owner("Ninna994")
-    public void testVerifyElementsOnPage() {
-        navContextMenu();
-        verifyPageTitle("Context Menu");
-        Assert.assertTrue(isElementDisplayed(theHotspotContainer()), "The hotspot container not displayed");
-    }
 
     @Test
     @Description("Verify context menu")
@@ -30,4 +22,15 @@ public class ContextMenuTest extends TheInternetFlow {
         Assert.assertTrue(alert.getText().equalsIgnoreCase("You selected a context menu"), "Text not displayed as expected");
         alertAccept();
     }
+
+    @Test
+    @Description("Verify elements on page")
+    @Owner("Ninna994")
+    public void testVerifyElementsOnPage() {
+        navContextMenu();
+        verifyPageTitle("Context Menu");
+        Assert.assertTrue(isElementDisplayed(theHotspotContainer()), "The hotspot container not displayed");
+    }
+
+
 }
