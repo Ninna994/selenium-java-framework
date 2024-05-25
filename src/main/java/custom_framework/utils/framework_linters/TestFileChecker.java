@@ -1,4 +1,4 @@
-package custom_framework.utils.frameworkLinters;
+package custom_framework.utils.framework_linters;
 
 import java.io.File;
 import java.io.IOException;
