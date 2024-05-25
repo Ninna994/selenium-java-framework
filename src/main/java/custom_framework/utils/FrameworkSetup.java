@@ -46,6 +46,10 @@ public class FrameworkSetup {
         loadSystemProperties();
     }
 
+    public String getBrowser() {
+        return browser;
+    }
+
     @BeforeMethod(alwaysRun = true)
     public void startDriver() throws MalformedURLException {
         if (settings.getProperty("run").equalsIgnoreCase("local")) {
@@ -67,19 +71,20 @@ public class FrameworkSetup {
     private void startLocalDriver() {
         WebDriver driver;
         if (browser.equalsIgnoreCase("Chrome")) {
-            ChromeOptions chromeOptions = getChromeOptions(downloadDirectory);
+            ChromeOptions chromeOptions = getChromeOptions();
             driver = new ChromeDriver(chromeOptions);
-            configureDevTools(driver);  // Add this method if needed, or remove if not applicable
+            configureChromeDevTools((ChromeDriver) driver);  // Add this method if needed, or remove if not applicable
         } else if (browser.equalsIgnoreCase("HeadlessChrome")) {
             ChromeOptions chromeOptions = getHeadlessChromeOptions();
             driver = new ChromeDriver(chromeOptions);
-            configureDevTools(driver);  // Add this method if needed, or remove if not applicable
+            configureChromeDevTools((ChromeDriver) driver);  // Add this method if needed, or remove if not applicable
         } else if (browser.equalsIgnoreCase("Firefox")) {
             FirefoxOptions firefoxOptions = getFirefoxOptions();
             driver = new FirefoxDriver(firefoxOptions);
         } else if (browser.equalsIgnoreCase("Edge")) {
-            EdgeOptions edgeOptions = new EdgeOptions();
+            EdgeOptions edgeOptions = getEdgeOptions();
             driver = new EdgeDriver(edgeOptions);
+            configureEdgeDevTools((EdgeDriver) driver);
         } else {
             throw new IllegalArgumentException("Unsupported browser: " + browser);
         }
@@ -107,6 +112,9 @@ public class FrameworkSetup {
             throw new IllegalArgumentException("Unsupported browser: " + browser);
         }
         driver = new RemoteWebDriver(new URL("http://192.168.1.100:4444/wd/hub"), options);
+        if (browser.equalsIgnoreCase("chrome")) {
+            configureChromeDevTools((ChromeDriver) driver);
+        }
         driver.manage().window().maximize();
         DriverThreadLocal.setDriver(driver);
     }
@@ -126,32 +134,19 @@ public class FrameworkSetup {
         return chromeOptions;
     }
 
-    private static ChromeOptions getChromeOptions(String downloadDirectory) {
-        ChromeOptions chromeOptions = new ChromeOptions();
-        Map<String, Object> chromePrefs = new HashMap<>();
+    private EdgeOptions getEdgeOptions() {
+        EdgeOptions edgeOptions = new EdgeOptions();
+        Map<String, Object> edgePrefs = new HashMap<>();
 
-        // Set Chrome preferences for file download
-        chromePrefs.put("profile.default_content_settings.popups", 0);
-        chromePrefs.put("download.default_directory", downloadDirectory);
-        chromePrefs.put("download.prompt_for_download", false);
-        chromePrefs.put("download.directory_upgrade", true);
-        chromePrefs.put("safebrowsing.enabled", "false");
+        edgePrefs.put("profile.default_content_settings.popups", 0);
+        edgePrefs.put("download.default_directory", downloadDirectory);
+        edgePrefs.put("selectfile.last_directory", fileDirectory);
+        edgePrefs.put("download.prompt_for_download", false);
+        edgePrefs.put("directory_upgrade", true);
 
-        // Set MIME types that should not prompt for download
-        chromePrefs.put("profile.default_content_setting_values.automatic_downloads", 1);
-        chromePrefs.put("download.extensions_to_open", "");
-        chromePrefs.put("profile.content_settings.exceptions.automatic_downloads.*.setting", 1);
-
-        // Add preferences to Chrome options
-        chromeOptions.setExperimentalOption("prefs", chromePrefs);
-        chromeOptions.addArguments("--incognito");
-        chromeOptions.addArguments("--remote-allow-origins=*");
-        chromeOptions.addArguments("--ignore-certificate-errors");
-        chromeOptions.addArguments("--disable-features=DownloadBubble,DownloadBubbleV2");
-        chromeOptions.addArguments("--safebrowsing-disable-download-protection");
-        chromeOptions.addArguments("--safebrowsing-disable-extension-blacklist");
-
-        return chromeOptions;
+        edgeOptions.setExperimentalOption("prefs", edgePrefs);
+        edgeOptions.addArguments("--inprivate", "--remote-allow-origins=*", "ignore-certificate-errors", "disable-features=DownloadBubble,DownloadBubbleV2");
+        return edgeOptions;
     }
 
     private FirefoxOptions getFirefoxOptions() {
@@ -171,8 +166,8 @@ public class FrameworkSetup {
         return chromeOptions;
     }
 
-    private void configureDevTools(WebDriver driver) {
-        DevTools devTools = ((ChromeDriver) driver).getDevTools();
+    private void configureChromeDevTools(ChromeDriver driver) {
+        DevTools devTools = (driver).getDevTools();
         devTools.createSession();
         devTools.send(Log.enable());
         devTools.addListener(Log.entryAdded(), entryAdded -> {
@@ -180,7 +175,22 @@ public class FrameworkSetup {
             String logUrl = String.valueOf(entryAdded.getUrl());
             String logLevel = entryAdded.getLevel().toString();
             if (logLevel.equals("warning") || logLevel.equals("error") && !logText.contains("net::ERR_NAME_NOT_RESOLVED")) {
-                String consoleLogMessage = ("CONSOLE LOGGED "  + logLevel.toUpperCase() + ". \n Log message ==> " + logText + "\n" + "Error url ==> " + logUrl);
+                String consoleLogMessage = ("CONSOLE LOGGED " + logLevel.toUpperCase() + ". \n Log message ==> " + logText + "\n" + "Error url ==> " + logUrl);
+                log.error(consoleLogMessage);
+            }
+        });
+    }
+
+    private void configureEdgeDevTools(EdgeDriver driver) {
+        DevTools devTools = driver.getDevTools();
+        devTools.createSession();
+        devTools.send(Log.enable());
+        devTools.addListener(Log.entryAdded(), entryAdded -> {
+            String logText = entryAdded.getText();
+            String logUrl = String.valueOf(entryAdded.getUrl());
+            String logLevel = entryAdded.getLevel().toString();
+            if (logLevel.equals("warning") || logLevel.equals("error") && !logText.contains("net::ERR_NAME_NOT_RESOLVED")) {
+                String consoleLogMessage = ("CONSOLE LOGGED " + logLevel.toUpperCase() + ". \n Log message ==> " + logText + "\n" + "Error url ==> " + logUrl);
                 log.error(consoleLogMessage);
             }
         });

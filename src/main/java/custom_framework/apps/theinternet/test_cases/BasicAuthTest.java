@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v124.network.Network;
 import org.openqa.selenium.devtools.v124.network.model.Headers;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -37,10 +38,18 @@ public class BasicAuthTest extends TheInternetFlow {
     @Description("Handling Basic Auth with CDP")
     @Owner("Ninna994")
     public void testLoginUserCDPMethod() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
-        devTools.send(Network.enable(Optional.of(0), Optional.of(0), Optional.of(0)));
+        FrameworkSetup fs = new FrameworkSetup();
+        DevTools devTools = null;
+        if (fs.getBrowser().equalsIgnoreCase("chrome")) {
+            devTools = ((ChromeDriver) driver()).getDevTools();
+        } else if (fs.getBrowser().equalsIgnoreCase("edge")) {
+            devTools = ((EdgeDriver) driver()).getDevTools();
+        }
 
+        assert devTools != null;
+        devTools.createSession();
+
+        devTools.send(Network.enable(Optional.of(0), Optional.of(0), Optional.of(0)));
         Map<String, Object> header = new HashMap<>();
         String basicAuth = "Basic " + new String(new Base64().encode(String.format("%s:%s", USERNAME_PASS, USERNAME_PASS).getBytes()));
 

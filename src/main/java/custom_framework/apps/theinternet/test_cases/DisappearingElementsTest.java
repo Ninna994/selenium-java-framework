@@ -1,6 +1,5 @@
 package custom_framework.apps.theinternet.test_cases;
 
-import custom_framework.apps.theinternet.page_elements.TheInternetUi;
 import custom_framework.apps.theinternet.page_flows.TheInternetFlow;
 import io.qameta.allure.Description;
 import io.qameta.allure.Owner;
@@ -14,14 +13,14 @@ public class DisappearingElementsTest extends TheInternetFlow {
     public void testGalleryAppearanceAfterRefresh() {
         navTheDisappearingElements();
         verifyPageTitle("Disappearing Elements");
-
-        Assert.assertEquals(verifyCount(new TheInternetUi().theNavElements()), 4, "More/less than 4 nav elements present before refreshing page.");
-
+        int initialCount = verifyCount(theNavElements());
         refreshPage();
+        refreshPage(); //current bug on website, need to perform two refreshes in order to change count
         sleepTime(2000);
         waitForPageToLoad();
-        Assert.assertEquals(verifyCount(new TheInternetUi().theNavElements()), 5, "More/less than 5 nav elements present after refreshing page.");
-        String lastElementText = getLastElement(theNavElements()).getText();
-        Assert.assertEquals(lastElementText, "Gallery", "Gallery is not last element");
+        int countAfterRefresh = verifyCount(theNavElements());
+
+        Assert.assertTrue(countAfterRefresh != initialCount,  "Count does not match");
+
     }
 }

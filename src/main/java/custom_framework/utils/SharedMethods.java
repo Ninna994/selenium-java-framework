@@ -19,6 +19,7 @@ import org.openqa.selenium.devtools.v124.performance.model.Metric;
 import org.openqa.selenium.devtools.v124.security.Security;
 import org.openqa.selenium.devtools.v124.storage.Storage;
 import org.openqa.selenium.devtools.v85.fetch.Fetch;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -822,11 +823,23 @@ public class SharedMethods extends FrameworkSetup {
     /*
      * -------------------- SELENIUM 4 -------------------- //
      */
+    DevTools devTools = null;
+    FrameworkSetup fs = new FrameworkSetup();
+    String browser = fs.getBrowser();
+
+    public void handleDevTools() {
+        if (browser.equalsIgnoreCase("chrome")) {
+            devTools = ((ChromeDriver) driver()).getDevTools();
+        } else if (browser.equalsIgnoreCase("edge")) {
+            devTools = ((EdgeDriver) driver()).getDevTools();
+        }
+        assert devTools != null;
+        devTools.createSession();
+    }
 
     public void mockGeolocation(double latitude, double longitude, int accuracy) {
 
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
         devTools.send(Emulation.setGeolocationOverride(Optional.of(latitude),
                 Optional.of(longitude),
                 Optional.of(accuracy)));
@@ -839,8 +852,7 @@ public class SharedMethods extends FrameworkSetup {
      */
 
     public void blockUrls() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
 
         devTools.send(Network.setBlockedURLs(List.of("*.css"))); // Blocks all css files
@@ -859,16 +871,14 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void bypassInsecureWebsite() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
         devTools.send(Security.setIgnoreCertificateErrors(true));
 
         inputUrl("https://untrusted-root.badssl.com/");
     }
 
     public void captureRequest() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
 
         // enable network capture
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
@@ -884,8 +894,7 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void captureResponse() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
 
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         devTools.addListener(Network.responseReceived(), responseReceived -> printResponseDetails(
@@ -900,8 +909,7 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void captureResponse(String responsePartUrl) {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
 
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         devTools.addListener(Network.responseReceived(), responseReceived -> {
@@ -917,8 +925,7 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void captureResponse(int responseCode) {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
 
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         devTools.addListener(Network.responseReceived(), responseReceived -> {
@@ -934,14 +941,12 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void clearCache() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
         devTools.send(Network.clearBrowserCache());
     }
 
     public void clearStorage(String originUrl) {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
         String storageTypes = "cookies,local_storage,session_storage,indexeddb,cache_storage";
         devTools.send(Storage.clearDataForOrigin(
                 originUrl,
@@ -949,8 +954,7 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void emulateNetwork() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
 
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         devTools.send(Network.emulateNetworkConditions(false, 20, 20, 50, Optional.of(ConnectionType.CELLULAR3G), Optional.empty(), Optional.empty(), Optional.empty()));
@@ -965,8 +969,7 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void metrics() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
 
         devTools.send(Performance.enable(Optional.empty()));
         List<Metric> metricList = devTools.send(Performance.getMetrics());
@@ -979,8 +982,7 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void mockAPIRequest() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
 
         devTools.send(Fetch.enable(Optional.empty(), Optional.empty()));
 
@@ -1002,8 +1004,7 @@ public class SharedMethods extends FrameworkSetup {
     }
 
     public void network() {
-        DevTools devTools = ((ChromeDriver) driver()).getDevTools();
-        devTools.createSession();
+        handleDevTools();
 
         driver().get("https://manytools.org/http-html-text/http-request-headers/");
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));

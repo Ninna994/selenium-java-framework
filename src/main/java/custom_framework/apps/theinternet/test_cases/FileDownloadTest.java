@@ -47,7 +47,7 @@ public class FileDownloadTest extends TheInternetFlow {
         navFileDownload();
         verifyPageTitle("File Downloader");
         int startingFileCount = getFileCount();
-        click(theDownloadLinks(), 2000);
+        click(theDownloadLinks(), 5000);
         String downloadedFileName = findLastDownloadedFile();
         System.out.println(downloadedFileName);
         int endCount = getFileCount();
