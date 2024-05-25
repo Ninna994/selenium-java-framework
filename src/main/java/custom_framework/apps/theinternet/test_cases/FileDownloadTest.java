@@ -15,7 +15,7 @@ public class FileDownloadTest extends TheInternetFlow {
     @Test
     @Description("Count all .jpeg files, download them and delete afterwards")
     @Owner("Ninna994")
-    public void testDownloadAllPngAndDeleteThemAfterwards() {
+    public void testDownloadAllExtensionAndDeleteThemAfterwards() {
         navFileDownload();
         int startingCount = getFileCount();
         System.out.println("Starting file count is: " + startingCount);
