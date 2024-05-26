@@ -1,5 +1,5 @@
 # Ignore settings.properties
-*.properties
+src/main/resources/settings.properties
 # IDE
 .idea/
 
