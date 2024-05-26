@@ -1,5 +1,5 @@
 # Ignore settings.properties
-settings.properties
+*.properties
 # IDE
 .idea/
 
