@@ -2,10 +2,6 @@ package custom_framework.utils;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,7 +17,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -29,16 +24,15 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 
 public class SharedMethods extends FrameworkSetup {
-
-    Random randomNum = new Random();
 
     /**
      * Checks a checkbox or selects a radio button if it is not already selected
@@ -259,47 +253,6 @@ public class SharedMethods extends FrameworkSetup {
         sleepTime(2000);
     }
 
-    public String getAttribute(By by, String attributeType) {
-        waitForElementPresent(by);
-        return driver().findElement(by).getAttribute(attributeType);
-    }
-
-    /**
-     * Method for taking element screenshots by providing locator
-     *
-     * @param by - locator of element
-     */
-    public void getScreenshotOfElement(By by) {
-        try {
-            File screenshot = driver().findElement(by).getScreenshotAs(OutputType.FILE);
-            File destinationFile = new File(screenshotDestinationReporting + fileSeparator + "screenshots" + fileSeparator + "element_screenshot" + getTimestamp() + ".png");
-            FileUtils.copyFile(screenshot, destinationFile);
-
-            log.info("Screenshot of the element was saved as: {}", destinationFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Screenshot method for adding screenshots to reports
-     *
-     * @param testCaseName - name of TC
-     * @return - destination File printed
-     */
-    public String getScreenshotPath(String testCaseName) throws IOException {
-        TakesScreenshot ts = (TakesScreenshot) driver();
-        File source = ts.getScreenshotAs(OutputType.FILE);
-        String destinationFile = screenshotDestinationReporting + testCaseName + ".jpg";
-        FileUtils.copyFile(source, new File(destinationFile));
-        return destinationFile;
-    }
-
-    public void getText(By by) {
-        waitForElementVisible(by);
-        driver().findElement(by).getText();
-    }
-
     public void hoverAndClick(By byHover, By byClick) {
         waitForElementClickable(byHover);
         Actions action = new Actions(driver());
@@ -503,6 +456,11 @@ public class SharedMethods extends FrameworkSetup {
      * -------------------- GETTERS -------------------- //
      */
 
+    public String getAttribute(By by, String attributeType) {
+        waitForElementPresent(by);
+        return driver().findElement(by).getAttribute(attributeType);
+    }
+
     /**
      * getElement function that accepts zero or more By arguments and returns true if element is present
      *
@@ -548,6 +506,37 @@ public class SharedMethods extends FrameworkSetup {
         return RandomStringUtils.randomAlphanumeric(length);
     }
 
+    /**
+     * Method for taking element screenshots by providing locator
+     *
+     * @param by - locator of element
+     */
+    public void getScreenshotOfElement(By by) {
+        try {
+            File screenshot = driver().findElement(by).getScreenshotAs(OutputType.FILE);
+            File destinationFile = new File(screenshotDestinationReporting + fileSeparator + "screenshots" + fileSeparator + "element_screenshot" + getTimestamp() + ".png");
+            FileUtils.copyFile(screenshot, destinationFile);
+
+            log.info("Screenshot of the element was saved as: {}", destinationFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Screenshot method for adding screenshots to reports
+     *
+     * @param testCaseName - name of TC
+     * @return - destination File printed
+     */
+    public String getScreenshotPath(String testCaseName) throws IOException {
+        TakesScreenshot ts = (TakesScreenshot) driver();
+        File source = ts.getScreenshotAs(OutputType.FILE);
+        String destinationFile = screenshotDestinationReporting + testCaseName + ".jpg";
+        FileUtils.copyFile(source, new File(destinationFile));
+        return destinationFile;
+    }
+
     public String getSelectedValue(By dropdown) {
         waitForElementVisible(dropdown);
         return new Select(getElement(dropdown)).getFirstSelectedOption().getText();
@@ -555,6 +544,11 @@ public class SharedMethods extends FrameworkSetup {
 
     public SearchContext getShadowRoot(By by) {
         return driver().findElement(by).getShadowRoot();
+    }
+
+    public String getText(By by) {
+        waitForElementVisible(by);
+        return driver().findElement(by).getText();
     }
 
     public String getTimestamp() {
@@ -592,22 +586,6 @@ public class SharedMethods extends FrameworkSetup {
             Alert alert = driver().switchTo().alert();
             alert.accept(); //clicks the "Okay" button
             sleepTime(1000);
-        }
-    }
-
-    /**
-     * OS specific method - for windows and for MAC
-     */
-    public void closeBrowserTab() {
-        String os = System.getProperty("os.name").toLowerCase();
-        Actions builder = new Actions(driver());
-        if (os.contains("windows")) {
-            Actions select = builder.keyDown(Keys.CONTROL).sendKeys("w");
-            select.perform();
-        } else {
-            Actions select = builder.keyDown(Keys.COMMAND).sendKeys("w");
-            builder.keyUp(Keys.COMMAND);
-            select.perform();
         }
     }
 
@@ -684,6 +662,14 @@ public class SharedMethods extends FrameworkSetup {
         }
     }
 
+    public void waitForAlertToBePresent() {
+        new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.alertIsPresent());
+    }
+
+    public void waitForAttributeToContain(By by, String attribute, String value) {
+        new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.attributeContains(by, attribute, value));
+    }
+
     public void waitForElementClickable(By by) {
         new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.elementToBeClickable(by));
     }
@@ -700,12 +686,28 @@ public class SharedMethods extends FrameworkSetup {
         new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.presenceOfElementLocated(by));
     }
 
+    public void waitForElementToBeNotSelected(By by) {
+        new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.not(ExpectedConditions.elementToBeSelected(by)));
+    }
+
+    public void waitForElementToBeSelected(By by) {
+        new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.elementToBeSelected(by));
+    }
+
     public void waitForElementVisible(By by) {
         new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
     public void waitForPageToLoad() {
         driver().manage().timeouts().pageLoadTimeout(Duration.ofSeconds(timeout));
+    }
+
+    public void waitForTextToBePresentInElement(By by, String text) {
+        new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.textToBePresentInElementLocated(by, text));
+    }
+
+    public void waitForUrlToContain(String fraction) {
+        new WebDriverWait(driver(), Duration.ofSeconds(timeout)).until(ExpectedConditions.urlContains(fraction));
     }
 
     /*
@@ -717,18 +719,22 @@ public class SharedMethods extends FrameworkSetup {
         if (Files.isDirectory(directory)) {
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
                 for (Path file : stream) {
-                    try {
-                        Files.delete(file);
-                        System.out.println("Deleted: " + file.getFileName());
-                    } catch (IOException e) {
-                        System.err.println("Failed to delete: " + file.getFileName() + " due to " + e.getMessage());
-                    }
+                    deleteFile(file);
                 }
             } catch (IOException e) {
                 System.err.println("Error accessing directory: " + e.getMessage());
             }
         } else {
             System.err.println("Not a directory: " + downloadDirectory);
+        }
+    }
+
+    private void deleteFile(Path file) {
+        try {
+            Files.delete(file);
+            System.out.println("Deleted: " + file.getFileName());
+        } catch (IOException e) {
+            System.err.println("Failed to delete: " + file.getFileName() + " due to " + e.getMessage());
         }
     }
 
@@ -752,16 +758,6 @@ public class SharedMethods extends FrameworkSetup {
         return (files != null) ? files.length : 0;
     }
 
-    public String readExcel(int columnNumber) throws IOException {
-        FileInputStream fs = new FileInputStream(fileDirectory + "\\" + "proba.xlsx");
-        XSSFWorkbook workbook = new XSSFWorkbook(fs);
-        XSSFSheet sheet = workbook.getSheetAt(0); //sheet number
-        Row row = sheet.getRow(1);
-        Cell cell = row.getCell(columnNumber);
-        log.info("Broj kolone: {}", columnNumber);
-        return String.valueOf(cell);
-    }
-
     public void uploadFile(String name) {
         driver().findElement(By.xpath("//input[@type='file']")).sendKeys(fileDirectory + "\\" + name);
     }
@@ -780,42 +776,83 @@ public class SharedMethods extends FrameworkSetup {
      * -------------------- CALENDAR / DATE / TIME METHODS -------------------- //
      */
 
-    public String getCurrentDate() {
-        Date todayDate = getDate();
-        SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy.");
-        return format1.format(todayDate);
+    public String addOrSubtractDays(String date, String format, int days) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDate localDate = LocalDate.parse(date, formatter);
+        LocalDate newDate = localDate.plusDays(days);
+        return newDate.format(formatter);
     }
 
-    public String getCurrentTime() {
-        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("Europe/Belgrade"));
-        int hour = cal.get(Calendar.HOUR);
-        int minutes = cal.get(Calendar.MINUTE);
-        return hour + ":" + minutes;
+    public String convertDateFormat(String date, String oldFormat, String newFormat) {
+        DateTimeFormatter oldFormatter = DateTimeFormatter.ofPattern(oldFormat);
+        DateTimeFormatter newFormatter = DateTimeFormatter.ofPattern(newFormat);
+        LocalDate localDate = LocalDate.parse(date, oldFormatter);
+        return localDate.format(newFormatter);
     }
 
-    public Date getDate() {
-        Calendar cal = GregorianCalendar.getInstance();
-        return cal.getTime();
+    public String getCurrentDate(String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDate currentDate = LocalDate.now();
+        return currentDate.format(formatter);
     }
 
-    public String getDateInFuture(String originalDate, int numberOfDays) {
-        SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy.");
-        Calendar calendar = Calendar.getInstance();
-        try {
-            calendar.setTime(format1.parse(originalDate));
-        } catch (ParseException e) {
-            e.printStackTrace();
+    public String getCurrentDateTime(String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        return currentDateTime.format(formatter);
+    }
+
+    public String getCurrentTimestamp(String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDateTime currentTimestamp = LocalDateTime.now();
+        return currentTimestamp.format(formatter);
+    }
+
+    public String getDateAfterDays(String format, int days) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDate newDate = LocalDate.now().plusDays(days);
+        return newDate.format(formatter);
+    }
+
+    public List<String> getDatesBetween(String startDate, String endDate, String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDate start = LocalDate.parse(startDate, formatter);
+        LocalDate end = LocalDate.parse(endDate, formatter);
+        List<String> dates = new ArrayList<>();
+
+        while (!start.isAfter(end)) {
+            dates.add(start.format(formatter));
+            start = start.plusDays(1);
         }
-        calendar.add(Calendar.DATE, numberOfDays);
-        return format1.format(calendar.getTime());
+        return dates;
     }
 
-    public String getDateTimeStamp() {
-        return new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss").format(new Timestamp(System.currentTimeMillis()));
+    public long getDaysBetweenDates(String startDate, String endDate, String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDate start = LocalDate.parse(startDate, formatter);
+        LocalDate end = LocalDate.parse(endDate, formatter);
+        return ChronoUnit.DAYS.between(start, end);
+    }
+
+    public String getFirstDayOfCurrentMonth(String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDate firstDay = LocalDate.now().withDayOfMonth(1);
+        return firstDay.format(formatter);
+    }
+
+    public String getLastDayOfCurrentMonth(String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LocalDate lastDay = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        return lastDay.format(formatter);
+    }
+
+    public LocalDate parseDate(String date, String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        return LocalDate.parse(date, formatter);
     }
 
     /*
-     * -------------------- SELENIUM 4 -------------------- //
+     * -------------------- SELENIUM 4 / NETWORK CDP -------------------- //
      */
 
     /**
@@ -836,24 +873,8 @@ public class SharedMethods extends FrameworkSetup {
         devTools.createSession();
     }
 
-    /**
-     * Method for mocking geolocation
-     * @param latitude - actual latitude
-     * @param longitude - actual longitude
-     * @param accuracy - accuracy parameter
-     */
-    public void mockGeolocation(double latitude, double longitude, int accuracy) {
-
-        handleDevTools();
-        devTools.send(Emulation.setGeolocationOverride(Optional.of(latitude),
-                Optional.of(longitude),
-                Optional.of(accuracy)));
-        driver().get("https://my-location.org/");
-        sleepTime(5000);
-    }
-
     /*
-     * -------------------- NETWORK METHODS -------------------- //
+     * -------------------- NETWORK CDP -------------------- //
      */
 
     /**
@@ -958,6 +979,23 @@ public class SharedMethods extends FrameworkSetup {
         connection.setRequestMethod("HEAD");
         connection.connect();
         return connection.getResponseCode();
+    }
+
+    /**
+     * Method for mocking geolocation
+     *
+     * @param latitude  - actual latitude
+     * @param longitude - actual longitude
+     * @param accuracy  - accuracy parameter
+     */
+    public void mockGeolocation(double latitude, double longitude, int accuracy) {
+
+        handleDevTools();
+        devTools.send(Emulation.setGeolocationOverride(Optional.of(latitude),
+                Optional.of(longitude),
+                Optional.of(accuracy)));
+        driver().get("https://my-location.org/");
+        sleepTime(5000);
     }
 
     /**
