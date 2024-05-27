@@ -12,13 +12,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v124.emulation.Emulation;
 import org.openqa.selenium.devtools.v124.network.Network;
-import org.openqa.selenium.devtools.v124.network.model.ConnectionType;
-import org.openqa.selenium.devtools.v124.network.model.Headers;
-import org.openqa.selenium.devtools.v124.performance.Performance;
-import org.openqa.selenium.devtools.v124.performance.model.Metric;
-import org.openqa.selenium.devtools.v124.security.Security;
 import org.openqa.selenium.devtools.v124.storage.Storage;
-import org.openqa.selenium.devtools.v85.fetch.Fetch;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -823,6 +817,11 @@ public class SharedMethods extends FrameworkSetup {
     /*
      * -------------------- SELENIUM 4 -------------------- //
      */
+
+    /**
+     * Setting devTools to null to initialize it.
+     * Making FrameworkSetup accessible for browser
+     */
     DevTools devTools = null;
     FrameworkSetup fs = new FrameworkSetup();
     String browser = fs.getBrowser();
@@ -837,6 +836,12 @@ public class SharedMethods extends FrameworkSetup {
         devTools.createSession();
     }
 
+    /**
+     * Method for mocking geolocation
+     * @param latitude - actual latitude
+     * @param longitude - actual longitude
+     * @param accuracy - accuracy parameter
+     */
     public void mockGeolocation(double latitude, double longitude, int accuracy) {
 
         handleDevTools();
@@ -851,36 +856,12 @@ public class SharedMethods extends FrameworkSetup {
      * -------------------- NETWORK METHODS -------------------- //
      */
 
-    public void blockUrls() {
-        handleDevTools();
-        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-
-        devTools.send(Network.setBlockedURLs(List.of("*.css"))); // Blocks all css files
-            /*
-             * Block request by URL below code
-             devTool.send(Network.setBlockedURLs( List.of(
-             "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-              )));
-
-             */
-
-        devTools.addListener(Network.loadingFailed(), loadingFailed -> System.out.println("Blocking reason: " + loadingFailed.getBlockedReason().get()));
-
-        inputUrl("https://rahulshettyacademy.com/#/index");
-        sleepTime(5000);
-    }
-
-    public void bypassInsecureWebsite() {
-        handleDevTools();
-        devTools.send(Security.setIgnoreCertificateErrors(true));
-
-        inputUrl("https://untrusted-root.badssl.com/");
-    }
-
+    /**
+     * Capture all requests
+     */
     public void captureRequest() {
         handleDevTools();
 
-        // enable network capture
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         devTools.addListener(Network.requestWillBeSent(), requestWillBeSent -> {
             System.out.println("Request url: " + requestWillBeSent.getDocumentURL());
@@ -888,11 +869,11 @@ public class SharedMethods extends FrameworkSetup {
             System.out.println("Request Headers: " + requestWillBeSent.getRequest().getHeaders().toString());
             System.out.println("-------------------------------------------------");
         });
-
-        // navigate to url
-        inputUrl("https://rahulshettyacademy.com/#/index");
     }
 
+    /**
+     * Capture all responses
+     */
     public void captureResponse() {
         handleDevTools();
 
@@ -903,11 +884,13 @@ public class SharedMethods extends FrameworkSetup {
                 responseReceived.getResponse().getHeaders().toString(),
                 responseReceived.getResponse().getMimeType()
         ));
-
-        // navigate to url
-        //inputUrl("https://google.com");
     }
 
+    /**
+     * Method used to capture and print responses by providing response partial URL. For example: Catch all responses for calls ending in /login
+     *
+     * @param responsePartUrl - partial URL by which you want to filter actual responses
+     */
     public void captureResponse(String responsePartUrl) {
         handleDevTools();
 
@@ -924,6 +907,11 @@ public class SharedMethods extends FrameworkSetup {
         });
     }
 
+    /**
+     * Method used to capture and print responses by providing response code. For example: Catch all 500 status codes
+     *
+     * @param responseCode - status code by which you want to filter actual responses
+     */
     public void captureResponse(int responseCode) {
         handleDevTools();
 
@@ -945,6 +933,11 @@ public class SharedMethods extends FrameworkSetup {
         devTools.send(Network.clearBrowserCache());
     }
 
+    /**
+     * Clears storage for url provided
+     *
+     * @param originUrl - URL for which you want storage cleaned
+     */
     public void clearStorage(String originUrl) {
         handleDevTools();
         String storageTypes = "cookies,local_storage,session_storage,indexeddb,cache_storage";
@@ -953,14 +946,13 @@ public class SharedMethods extends FrameworkSetup {
                 storageTypes));
     }
 
-    public void emulateNetwork() {
-        handleDevTools();
-
-        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-        devTools.send(Network.emulateNetworkConditions(false, 20, 20, 50, Optional.of(ConnectionType.CELLULAR3G), Optional.empty(), Optional.empty(), Optional.empty()));
-        inputUrl("https://rahulshettyacademy.com/#/index");
-    }
-
+    /**
+     * Get response status code for actual request URL provided
+     *
+     * @param url - request URL
+     * @return - actual response code as int
+     * @throws IOException - for url handling
+     */
     public int getUrlResponseCode(String url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("HEAD");
@@ -968,54 +960,14 @@ public class SharedMethods extends FrameworkSetup {
         return connection.getResponseCode();
     }
 
-    public void metrics() {
-        handleDevTools();
-
-        devTools.send(Performance.enable(Optional.empty()));
-        List<Metric> metricList = devTools.send(Performance.getMetrics());
-        driver().get("https://opensource.saucelabs.com/");
-
-        for (Metric m : metricList) {
-            System.out.println(m.getName() + " = " + m.getValue());
-        }
-
-    }
-
-    public void mockAPIRequest() {
-        handleDevTools();
-
-        devTools.send(Fetch.enable(Optional.empty(), Optional.empty()));
-
-        devTools.addListener(Fetch.requestPaused(), req -> {
-            if (req.getRequest().getUrl().contains("=Shetty")) {
-                String mock = req.getRequest().getUrl().replace("=shetty", "=Unknown");
-                devTools.send(Fetch.continueRequest(req.getRequestId(), Optional.of(mock), Optional.empty(),
-                        Optional.empty(), Optional.empty()));
-            } else {
-                devTools.send(Fetch.continueRequest(req.getRequestId(), Optional.of(req.getRequest().getUrl()),
-                        Optional.empty(), Optional.empty(), Optional.empty()));
-            }
-        });
-
-        driver().get("https://www.rahulshettyacademy.com/angularAppdemo/");
-
-        driver().findElement(By.xpath("//button[contains(text(),'Virtual Library')] ")).click();
-
-    }
-
-    public void network() {
-        handleDevTools();
-
-        driver().get("https://manytools.org/http-html-text/http-request-headers/");
-        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-
-        Headers headers = new Headers(Collections.singletonMap("testing", "selenium"));
-        devTools.send(Network.setExtraHTTPHeaders(headers));
-
-        driver().get("https://manytools.org/http-html-text/http-request-headers/");
-        driver().quit();
-    }
-
+    /**
+     * Response details print
+     *
+     * @param url      - actual response url
+     * @param status   - status code
+     * @param headers  - headers
+     * @param mimeType - mime type
+     */
     private void printResponseDetails(String url, int status, String headers, String mimeType) {
         System.out.println("------------------------------------------------------");
         System.out.println("Response Url => " + url);

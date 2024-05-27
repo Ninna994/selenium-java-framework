@@ -31,6 +31,7 @@ public class FrameworkSetup {
     private final String browser = settings.getProperty("browser");
     private final String environment = settings.getProperty("environment");
     private final String system = settings.getProperty("system");
+    private final String remoteUrl = settings.getProperty("remoteUrl");
     private final Map<String, String> systemProperties = new HashMap<>();
 
     public final ExtendedBy By = new ExtendedBy();
@@ -111,7 +112,7 @@ public class FrameworkSetup {
         } else {
             throw new IllegalArgumentException("Unsupported browser: " + browser);
         }
-        driver = new RemoteWebDriver(new URL("http://192.168.1.100:4444/wd/hub"), options);
+        driver = new RemoteWebDriver(new URL(remoteUrl), options);
         if (browser.equalsIgnoreCase("chrome")) {
             configureChromeDevTools((ChromeDriver) driver);
         }
