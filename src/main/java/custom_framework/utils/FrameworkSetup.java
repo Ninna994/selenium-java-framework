@@ -27,6 +27,7 @@ import java.util.Properties;
 
 
 public class FrameworkSetup {
+
     private final Properties settings = Settings.load("settings.properties");
     private final String browser = settings.getProperty("browser");
     private final String environment = settings.getProperty("environment");
