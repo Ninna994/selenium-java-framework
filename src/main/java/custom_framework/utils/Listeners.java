@@ -10,6 +10,11 @@ import org.testng.ITestResult;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.Properties;
 
 public class Listeners extends SharedMethods implements ITestListener {
 
@@ -19,7 +24,8 @@ public class Listeners extends SharedMethods implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        test = extent.createTest(result.getMethod().getMethodName());
+        String testName = result.getTestClass().getName() + " - " + result.getMethod().getMethodName();
+        test = extent.createTest(testName);
         extentTest.set(test); // to support parallel execution
     }
 
@@ -55,9 +61,46 @@ public class Listeners extends SharedMethods implements ITestListener {
     }
 
     @Override
+    public void onStart(ITestContext context) {
+        if (shouldClearAllureResults()) {
+            clearAllureResultsDirectory();
+        }
+    }
+
+    @Override
     public void onFinish(ITestContext context) {
         extent.flush();
         extentTest.remove();
+    }
+
+    private boolean shouldClearAllureResults() {
+        Properties properties = new Properties();
+        try {
+            FileInputStream fileInputStream = new FileInputStream("src/main/resources/settings.properties");
+            properties.load(fileInputStream);
+            return Boolean.parseBoolean(properties.getProperty("clear.allure.results"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false; // Default to not clearing if the property cannot be read
+    }
+
+    private void clearAllureResultsDirectory() {
+        Path allureResultsPath = Paths.get("target/allure-results");
+        if (Files.exists(allureResultsPath)) {
+            try (var paths = Files.walk(allureResultsPath)) {
+                paths.sorted(Comparator.reverseOrder())
+                        .forEach(path -> {
+                            try {
+                                Files.delete(path);
+                            } catch (IOException e) {
+                                log.warn("Failed to delete file: {}", path.toAbsolutePath(), e);
+                            }
+                        });
+            } catch (IOException e) {
+                log.error("Failed to clear allure results directory", e);
+            }
+        }
     }
 
 }
