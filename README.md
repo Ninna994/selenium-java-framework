@@ -4,7 +4,7 @@ Welcome to the Selenium Java Framework project! This README file outlines the pr
 this framework effectively.
 
 You can contact me on [LinkedIn](https://www.linkedin.com/in/nikolina-djekic/) or by sending mail to *
-nikolina.djekic94@gmail.com* or *inanikolina@gmail.com*
+nikolina.djekic94@gmail.com* or *inanikolina@gmail.com* 
 
 Please feel free to reach out to me if you have any suggestion, or you want to contribute to this project.
 
